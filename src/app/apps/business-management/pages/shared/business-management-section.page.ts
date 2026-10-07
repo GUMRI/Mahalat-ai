@@ -4,6 +4,7 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
+  IonSpinner,
   IonText,
   IonTitle,
   IonToolbar,
@@ -132,6 +133,7 @@ const PAGE_CONTENT: Record<
     IonContent,
     IonHeader,
     IonIcon,
+    IonSpinner,
     IonText,
     IonTitle,
     IonToolbar,
@@ -148,14 +150,26 @@ export class BusinessManagementSectionPage implements OnInit {
   private readonly registration = inject(ShopRegistrationService);
   private readonly router = inject(Router);
   readonly shop = signal<ShopDetails | null>(null);
+  readonly isLoadingShop = signal(true);
   readonly shopLoadFailed = signal(false);
   readonly isSigningOut = signal(false);
   readonly signOutFailed = signal(false);
 
   async ngOnInit(): Promise<void> {
+    await this.loadShopDetails();
+  }
+
+  async retryShopLoad(): Promise<void> {
+    await this.loadShopDetails();
+  }
+
+  private async loadShopDetails(): Promise<void> {
+    this.isLoadingShop.set(true);
+    this.shopLoadFailed.set(false);
     const user = this.auth.user();
     if (!user) {
       this.shopLoadFailed.set(true);
+      this.isLoadingShop.set(false);
       return;
     }
 
@@ -163,6 +177,8 @@ export class BusinessManagementSectionPage implements OnInit {
       this.shop.set(await this.registration.getShopDetails(user.uid));
     } catch {
       this.shopLoadFailed.set(true);
+    } finally {
+      this.isLoadingShop.set(false);
     }
   }
 

@@ -1,6 +1,4 @@
 <ion-tabs>
- 
-
   <ion-tab-bar slot="bottom">
     <ion-tab-button tab="home" href="/app/home">
       <ion-icon [icon]="icons.home" aria-hidden="true"></ion-icon>
@@ -19,37 +17,4 @@
       <ion-label>{{ 'app.navigation.pos' | transloco }}</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
-
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="assistant-fab">
-    <ion-fab-button
-      [attr.aria-label]="'app.assistant.open' | transloco"
-      (click)="isAssistantOpen.set(true)"
-    >
-      <ion-icon [icon]="icons.assistant" aria-hidden="true"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
 </ion-tabs>
-
-<ion-modal
-  [isOpen]="isAssistantOpen()"
-  [attr.aria-label]="'app.assistant.title' | transloco"
-  (ionModalDidDismiss)="closeAssistant()"
->
-  <ng-template>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ 'app.assistant.title' | transloco }}</ion-title>
-        <ion-button slot="end" fill="clear" [attr.aria-label]="'app.assistant.close' | transloco" (click)="closeAssistant()">
-          <ion-icon [icon]="icons.close" aria-hidden="true"></ion-icon>
-        </ion-button>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content class="assistant-content">
-      <div class="assistant-intro">
-        <ion-icon [icon]="icons.assistant" aria-hidden="true"></ion-icon>
-        <h2>{{ 'app.assistant.title' | transloco }}</h2>
-        <p>{{ 'app.assistant.comingSoon' | transloco }}</p>
-      </div>
-    </ion-content>
-  </ng-template>
-</ion-modal>

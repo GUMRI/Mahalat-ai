@@ -381,13 +381,9 @@
         "nextTitle": "La caisse est la prochaine étape",
         "nextDescription": "L’espace est prêt pour le parcours de vente. La recherche de produits, les commandes simultanées enregistrées et les paiements seront ajoutés ensuite."
       },
-      "assistant": {
-        "open": "Ouvrir l’assistant",
-        "close": "Fermer l’assistant",
-        "title": "Assistant Mahalat",
-        "comingSoon": "L’assistant sera disponible ici. Il vous présentera les modifications à vérifier avant tout enregistrement."
-      },
       "businessManagement": {
+        "loadingShop": "Chargement des informations de la boutique…",
+        "retry": "Réessayer",
         "navigation": {
           "label": "Pages de gestion de l’activité",
           "overview": "Vue d’ensemble",
@@ -403,15 +399,19 @@
         "overview": {
           "title": "Gestion de l’activité",
           "eyebrow": "Votre boutique en un coup d’œil",
-          "welcome": "Que souhaitez-vous faire aujourd’hui ?",
-          "description": "Démarrez une vente ou accédez directement à une partie de votre boutique.",
+          "welcome": "L’activité de votre boutique en un coup d’œil",
+          "description": "Consultez les ventes, la caisse, les dettes clients et fournisseurs et les dépenses de la période choisie.",
           "openPos": "Ouvrir la caisse",
           "quickActions": "Actions rapides",
           "quickActionsDescription": "Les tâches courantes sont accessibles en un geste.",
           "newSale": "Nouvelle vente",
+          "newPurchase": "Nouvel achat",
+          "newExpense": "Nouvelle dépense",
+          "collectOrPay": "Encaisser / payer",
           "cashMovements": "Mouvements de caisse",
           "manageShop": "Gérer votre boutique",
           "manageShopDescription": "Choisissez une section pour consulter et gérer ses données.",
+          "shopAreasLabel": "Sections de gestion de la boutique",
           "invoicesDescription": "Ventes, achats et retours",
           "vouchersDescription": "Encaissements, paiements et dépenses",
           "productsDescription": "Articles, services et prix",
@@ -421,7 +421,42 @@
           "usersDescription": "Personnes autorisées à travailler dans cette boutique",
           "shopsDescription": "Gérer vos boutiques",
           "activityNotice": "Les résumés d’activité apparaîtront lorsque les documents confirmés seront connectés.",
-          "viewInvoices": "Voir les factures"
+          "viewInvoices": "Voir les factures",
+          "statusLabel": "Résumé des services et alertes",
+          "metrics": {
+            "title": "Résumé de l’activité",
+            "sales": "Ventes de la période",
+            "salesHint": "Ventes confirmées moins retours",
+            "profit": "Bénéfice estimé des ventes",
+            "profitHint": "Ventes moins coût des articles vendus",
+            "cash": "Caisse",
+            "cashHint": "Solde initial plus encaissements moins décaissements",
+            "receivables": "Dettes clients",
+            "receivablesHint": "Factures clients non réglées",
+            "payables": "Dettes fournisseurs",
+            "payablesHint": "Montants dus aux fournisseurs",
+            "expenses": "Dépenses",
+            "expensesHint": "Dépenses confirmées de la période",
+            "approximate": "Estimé",
+            "unavailable": "Indisponible",
+            "trendUnavailable": "Comparaison indisponible",
+            "unavailableNotice": "Les chiffres apparaîtront lorsque les documents confirmés seront connectés."
+          },
+          "period": {
+            "label": "Période du résumé",
+            "today": "Aujourd’hui",
+            "week": "Semaine",
+            "month": "Mois"
+          },
+          "shift": {
+            "title": "État du service",
+            "unavailable": "Les informations de service ne sont pas encore connectées.",
+            "open": "Voir les services"
+          },
+          "alerts": {
+            "title": "Alertes",
+            "unavailable": "Les alertes seront disponibles après connexion du stock et des paiements."
+          }
         },
         "pages": {
           "invoices": {

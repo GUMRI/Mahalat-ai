@@ -380,13 +380,9 @@
         "nextTitle": "Checkout is the next step",
         "nextDescription": "This workspace is ready for the POS flow. Product search, parallel saved orders and payment handling will be added next."
       },
-      "assistant": {
-        "open": "Open assistant",
-        "close": "Close assistant",
-        "title": "Mahalat assistant",
-        "comingSoon": "The assistant workspace will be connected here. It will prepare changes for your review before anything is saved."
-      },
       "businessManagement": {
+        "loadingShop": "Loading shop information…",
+        "retry": "Try again",
         "navigation": {
           "label": "Business Management pages",
           "overview": "Overview",
@@ -402,15 +398,19 @@
         "overview": {
           "title": "Business Management",
           "eyebrow": "Your shop, at a glance",
-          "welcome": "What would you like to do today?",
-          "description": "Open a sale or jump straight to an area of your shop.",
+          "welcome": "Your shop’s activity at a glance",
+          "description": "Review sales, cash, customer and supplier dues, and expenses for the selected period.",
           "openPos": "Open point of sale",
           "quickActions": "Quick actions",
           "quickActionsDescription": "Common tasks are one tap away.",
           "newSale": "New sale",
+          "newPurchase": "New purchase",
+          "newExpense": "New expense",
+          "collectOrPay": "Collect / pay",
           "cashMovements": "Cash movements",
           "manageShop": "Manage your shop",
           "manageShopDescription": "Choose an area to view and manage its records.",
+          "shopAreasLabel": "Shop management areas",
           "invoicesDescription": "Sales, purchases and returns",
           "vouchersDescription": "Receipts, payments and expenses",
           "productsDescription": "Items, services and prices",
@@ -420,7 +420,42 @@
           "usersDescription": "People who can work in this shop",
           "shopsDescription": "Manage your shop spaces",
           "activityNotice": "Shop activity summaries will appear here after confirmed records are connected.",
-          "viewInvoices": "View invoices"
+          "viewInvoices": "View invoices",
+          "statusLabel": "Shift and alerts overview",
+          "metrics": {
+            "title": "Activity summary",
+            "sales": "Sales this period",
+            "salesHint": "Confirmed sales minus returns",
+            "profit": "Estimated sales profit",
+            "profitHint": "Sales less the cost of sold items",
+            "cash": "Cash in drawer",
+            "cashHint": "Opening cash plus receipts minus payouts",
+            "receivables": "Customer dues",
+            "receivablesHint": "Unpaid customer invoices",
+            "payables": "Supplier dues",
+            "payablesHint": "Amounts currently owed to suppliers",
+            "expenses": "Expenses",
+            "expensesHint": "Confirmed expenses in this period",
+            "approximate": "Estimated",
+            "unavailable": "Not available",
+            "trendUnavailable": "Comparison unavailable",
+            "unavailableNotice": "Activity figures appear after confirmed shop records are connected."
+          },
+          "period": {
+            "label": "Summary period",
+            "today": "Today",
+            "week": "Week",
+            "month": "Month"
+          },
+          "shift": {
+            "title": "Shift status",
+            "unavailable": "Shift information is not connected yet.",
+            "open": "View shifts"
+          },
+          "alerts": {
+            "title": "Alerts",
+            "unavailable": "Shop alerts are not available until inventory and payment activity are connected."
+          }
         },
         "pages": {
           "invoices": {

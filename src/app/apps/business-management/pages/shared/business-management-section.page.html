@@ -32,8 +32,18 @@
 
 <ion-content class="business-management-content" [fullscreen]="true">
   <main class="business-management-main">
-    @if (shopLoadFailed()) {
-      <ion-text color="danger" role="alert">{{ 'app.businessManagement.errors.shopLoad' | transloco }}</ion-text>
+    @if (isLoadingShop()) {
+      <div class="shop-status" role="status">
+        <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
+        <span>{{ 'app.businessManagement.loadingShop' | transloco }}</span>
+      </div>
+    } @else if (shopLoadFailed()) {
+      <div class="shop-error" role="alert">
+        <ion-text color="danger">{{ 'app.businessManagement.errors.shopLoad' | transloco }}</ion-text>
+        <ion-button fill="clear" (click)="retryShopLoad()">
+          {{ 'app.businessManagement.retry' | transloco }}
+        </ion-button>
+      </div>
     }
     @if (signOutFailed()) {
       <ion-text color="danger" role="alert">{{ 'app.businessManagement.errors.signOut' | transloco }}</ion-text>

@@ -25,118 +25,7 @@
         <ion-text color="danger" role="alert">{{ 'app.signOutError' | transloco }}</ion-text>
       }
 
-      @if (section === 'home') {
-        <section class="welcome-row">
-          <div>
-            <p class="eyebrow">Business Management</p>
-            @if (isLoadingShop()) {
-              <ion-spinner name="crescent"></ion-spinner>
-            } @else {
-              <h1>{{ shop()?.name ?? 'Your shop' }}<span>Operations overview</span></h1>
-            }
-            <p class="section-description">
-              A simple operating center for sales, stock, cash, supplier balances, and the next action to take.
-            </p>
-          </div>
-          <ion-button class="pos-button" routerLink="/app/pos">
-            <ion-icon slot="start" [icon]="icons.sale" aria-hidden="true"></ion-icon>
-            Open POS
-          </ion-button>
-        </section>
-
-        <ion-grid class="metric-grid">
-          <ion-row>
-            @for (metric of overviewMetrics; track metric.label) {
-              <ion-col size="6" size-lg="3">
-                <ion-card class="metric-card">
-                  <ion-card-content>
-                    <ion-icon [icon]="metric.icon" aria-hidden="true"></ion-icon>
-                    <ion-label>{{ metric.label }}</ion-label>
-                    <strong>{{ metric.value ?? '—' }}</strong>
-                    <small [class.metric-positive]="metric.direction === 'up'" [class.metric-warning]="metric.direction === 'warning'" [class.metric-negative]="metric.direction === 'down'">
-                      {{ metric.detail }}
-                    </small>
-                  </ion-card-content>
-                </ion-card>
-              </ion-col>
-            }
-          </ion-row>
-        </ion-grid>
-
-        <section class="section-grid" aria-label="Business management sections">
-          @for (sectionItem of businessSections; track sectionItem.label) {
-            <button type="button" class="section-tile" [attr.aria-label]="sectionItem.label">
-              <ion-icon [icon]="sectionItem.icon" aria-hidden="true"></ion-icon>
-              <span>{{ sectionItem.label }}</span>
-            </button>
-          }
-        </section>
-
-        <section class="twin-panels">
-          <ion-card class="panel-card">
-            <ion-card-header>
-              <ion-card-title>Shift and alerts</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <div class="status-pill">{{ shiftState.label }}</div>
-              <p class="empty-panel-copy">{{ shiftState.hint }}</p>
-              @if (alerts.length === 0) {
-                <div class="empty-panel">
-                  <p>No active alerts right now.</p>
-                  <ion-button fill="outline" size="small">{{ shiftState.action }}</ion-button>
-                </div>
-              } @else {
-                <ul class="alert-list">
-                  @for (alert of alerts; track alert.title) {
-                    <li>
-                      <div>
-                        <strong>{{ alert.title }}</strong>
-                        <p>{{ alert.detail }}</p>
-                      </div>
-                      <ion-button fill="clear" size="small">{{ alert.action }}</ion-button>
-                    </li>
-                  }
-                </ul>
-              }
-            </ion-card-content>
-          </ion-card>
-
-          <ion-card class="panel-card">
-            <ion-card-header>
-              <ion-card-title>AI-ready function calls</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-list class="function-list" inset>
-                @for (definition of functionCatalog(); track definition.name) {
-                  <ion-item>
-                    <ion-label>
-                      <h2>{{ definition.name }}</h2>
-                      <p>{{ definition.description }}</p>
-                    </ion-label>
-                    <ion-badge slot="end" color="primary">{{ definition.type }}</ion-badge>
-                  </ion-item>
-                }
-              </ion-list>
-            </ion-card-content>
-          </ion-card>
-        </section>
-
-        <ion-card class="setup-card">
-          <ion-card-header>
-            <ion-card-title>Quick actions</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <div class="quick-actions">
-              @for (action of quickActions; track action.label) {
-                <ion-button fill="outline" [routerLink]="action.route">
-                  <ion-icon slot="start" [icon]="action.icon" aria-hidden="true"></ion-icon>
-                  {{ action.label }}
-                </ion-button>
-              }
-            </div>
-          </ion-card-content>
-        </ion-card>
-      } @else if (section === 'workers') {
+      @if (section() === 'workers') {
         <section class="section-heading">
           <p class="eyebrow">{{ 'app.sections.workers' | transloco }}</p>
           <h1>{{ 'app.workers.title' | transloco }}</h1>
@@ -154,7 +43,7 @@
             </ion-item>
           }
         </ion-list>
-      } @else if (section === 'settings') {
+      } @else if (section() === 'settings') {
         <section class="section-heading">
           <p class="eyebrow">{{ 'app.sections.settings' | transloco }}</p>
           <h1>{{ 'app.settings.title' | transloco }}</h1>
