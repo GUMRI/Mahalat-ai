@@ -1,0 +1,78 @@
+<ion-button
+  [id]="triggerId"
+  class="profile-menu-trigger"
+  fill="clear"
+  [attr.aria-label]="'app.profileMenu.label' | transloco"
+>
+  <ion-icon slot="icon-only" [icon]="menuIcon" aria-hidden="true"></ion-icon>
+</ion-button>
+
+<ion-popover
+  #profilePopover
+  [trigger]="triggerId"
+  triggerAction="click"
+  side="bottom"
+  alignment="end"
+  [dismissOnSelect]="false"
+  [attr.aria-label]="'app.profileMenu.label' | transloco"
+>
+  <ng-template>
+    <ion-list lines="none">
+      <ion-item class="profile-summary">
+        <ion-avatar slot="start">
+          @if (user()?.photoURL; as photoUrl) {
+            <img [src]="photoUrl" alt="" />
+          } @else {
+            <span class="avatar-initial">{{ avatarInitial() }}</span>
+          }
+        </ion-avatar>
+        <ion-label>
+          <strong>{{ displayName() ?? ('app.profileMenu.nameFallback' | transloco) }}</strong>
+          @if (user()?.email; as email) {
+            <p>{{ email }}</p>
+          }
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="language-item">
+        <ion-label>{{ 'app.settings.language' | transloco }}</ion-label>
+        <ion-select
+          slot="end"
+          interface="popover"
+          [value]="lang.locale()"
+          [attr.aria-label]="'app.settings.language' | transloco"
+          (ionChange)="onLocaleChange($event)"
+        >
+          @for (locale of locales; track locale.code) {
+            <ion-select-option [value]="locale.code">{{ locale.label }}</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+
+      <ion-item
+        class="settings-item"
+        button
+        detail="false"
+        (click)="openSettings(profilePopover)"
+      >
+        <ion-icon slot="start" [icon]="settingsIcon" aria-hidden="true"></ion-icon>
+        <ion-label>{{ 'app.navigation.settings' | transloco }}</ion-label>
+      </ion-item>
+
+      <ion-item
+        class="sign-out-item"
+        button
+        detail="false"
+        [disabled]="isSigningOut()"
+        (click)="requestSignOut(profilePopover)"
+      >
+        @if (isSigningOut()) {
+          <ion-spinner slot="start" name="crescent"></ion-spinner>
+        } @else {
+          <ion-icon slot="start" [icon]="signOutIcon" aria-hidden="true"></ion-icon>
+        }
+        <ion-label>{{ 'app.signOut' | transloco }}</ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-template>
+</ion-popover>

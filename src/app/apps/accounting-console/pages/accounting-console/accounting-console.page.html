@@ -1,0 +1,579 @@
+<ion-content class="console-content" [fullscreen]="true">
+  <main class="console-main">
+    <header class="console-heading">
+      <div>
+        <p class="eyebrow">{{ 'app.accountingConsole.eyebrow' | transloco }}</p>
+        <h1>{{ ('app.accountingConsole.views.' + view + '.title') | transloco }}</h1>
+        <p class="heading-description">
+          {{ ('app.accountingConsole.views.' + view + '.description') | transloco }}
+        </p>
+      </div>
+      <div class="heading-actions">
+        <ion-badge color="medium" class="status-badge">
+          <ion-icon [icon]="icons.lock" aria-hidden="true"></ion-icon>
+          {{ 'app.accountingConsole.status' | transloco }}
+        </ion-badge>
+        <ion-button
+          size="small"
+          fill="outline"
+          disabled
+          [attr.aria-label]="'app.accountingConsole.exportUnavailable' | transloco"
+        >
+          <ion-icon slot="start" [icon]="icons.download" aria-hidden="true"></ion-icon>
+          {{ 'app.accountingConsole.export' | transloco }}
+        </ion-button>
+        @if (!demoData() && !isLoadingDemoData()) {
+          <ion-button
+            size="small"
+            fill="solid"
+            color="tertiary"
+            [disabled]="isSeedingDemoData()"
+            (click)="seedDemoData()"
+          >
+            @if (isSeedingDemoData()) {
+              <ion-spinner slot="start" name="crescent"></ion-spinner>
+            } @else {
+              <ion-icon slot="start" [icon]="icons.journals" aria-hidden="true"></ion-icon>
+            }
+            {{ 'app.accountingConsole.demo.create' | transloco }}
+          </ion-button>
+        }
+      </div>
+    </header>
+
+    <nav class="console-navigation" [attr.aria-label]="'app.accountingConsole.navigationLabel' | transloco">
+      @for (item of navigation; track item.view) {
+        <ion-button
+          size="small"
+          [fill]="view === item.view ? 'solid' : 'outline'"
+          [routerLink]="item.path"
+          [attr.aria-current]="view === item.view ? 'page' : null"
+        >
+          {{ ('app.accountingConsole.navigation.' + item.view) | transloco }}
+        </ion-button>
+      }
+    </nav>
+
+    <section class="integrity-note" role="note">
+      <ion-icon [icon]="icons.alert" aria-hidden="true"></ion-icon>
+      <p>{{ 'app.accountingConsole.integrityNote' | transloco }}</p>
+    </section>
+
+    @if (demoData()) {
+      <section class="demo-banner" role="status">
+        <ion-icon [icon]="icons.alert" aria-hidden="true"></ion-icon>
+        <p>{{ 'app.accountingConsole.demo.banner' | transloco }}</p>
+        <ion-chip color="tertiary">
+          <ion-label>{{ 'app.accountingConsole.demo.label' | transloco }}</ion-label>
+        </ion-chip>
+      </section>
+    } @else if (demoDataError(); as errorKey) {
+      <section class="empty-template error-state" role="alert">
+        <ion-icon [icon]="icons.alert" aria-hidden="true"></ion-icon>
+        <p>{{ errorKey | transloco }}</p>
+        <ion-button fill="clear" (click)="loadDemoData()">
+          {{ 'app.accountingConsole.retry' | transloco }}
+        </ion-button>
+      </section>
+    }
+
+    @if (view === 'overview') {
+      <section class="summary-grid" [attr.aria-label]="'app.accountingConsole.summaryLabel' | transloco">
+        @for (key of ['assets', 'liabilities', 'revenue', 'expenses']; track key) {
+          <article class="summary-card">
+            <span>{{ ('app.accountingConsole.metrics.' + key) | transloco }}</span>
+            <strong>{{ formatDemoAmount(overviewMetric(key)) }}</strong>
+            <small>
+              {{
+                demoData()
+                  ? ('app.accountingConsole.demo.label' | transloco)
+                  : ('app.accountingConsole.noPostedData' | transloco)
+              }}
+            </small>
+          </article>
+        }
+      </section>
+
+      <section class="panel overview-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>{{ 'app.accountingConsole.chartSummaryTitle' | transloco }}</h2>
+            <p>{{ 'app.accountingConsole.chartSummaryDescription' | transloco }}</p>
+          </div>
+          <ion-badge color="light">
+            {{ accountCount() }} {{ 'app.accountingConsole.accountsCount' | transloco }}
+          </ion-badge>
+        </div>
+        <div class="group-summary">
+          @for (group of groups; track group.code) {
+            <a [routerLink]="['/app/accounting/console/accounts']">
+              <span class="group-code">{{ group.code }}</span>
+              <span>{{ ('app.accountingConsole.groups.' + group.nameKey) | transloco }}</span>
+              <strong>{{ accountCountForGroup(group.code) }}</strong>
+              <small>{{ formatDemoAmount(demoGroupBalance(group.code)) }}</small>
+              <ion-icon [icon]="icons.next" aria-hidden="true"></ion-icon>
+            </a>
+          }
+        </div>
+        <ion-button fill="clear" routerLink="/app/accounting/console/accounts">
+          {{ 'app.accountingConsole.openChart' | transloco }}
+        </ion-button>
+      </section>
+
+      @if (demoSummary(); as summary) {
+        <section class="panel demo-integrity-panel">
+          <div>
+            <h2>{{ 'app.accountingConsole.demo.balanceCheck' | transloco }}</h2>
+            <p>
+              {{ 'app.accountingConsole.metrics.assets' | transloco }}:
+              {{ formatDemoAmount(summary.assets) }}
+              =
+              {{ 'app.accountingConsole.metrics.liabilities' | transloco }}
+              +
+              {{ 'app.accountingConsole.metrics.equity' | transloco }}:
+              {{ formatDemoAmount(summary.liabilities + summary.equity) }}
+            </p>
+          </div>
+          <ion-chip [color]="summary.isBalanced ? 'success' : 'danger'">
+            <ion-label>
+              {{
+                summary.isBalanced
+                  ? ('app.accountingConsole.demo.balanced' | transloco)
+                  : ('app.accountingConsole.demo.unbalanced' | transloco)
+              }}
+            </ion-label>
+          </ion-chip>
+        </section>
+      } @else {
+        <section class="empty-ledger">
+          <ion-icon [icon]="icons.journals" aria-hidden="true"></ion-icon>
+          <div>
+            <h2>{{ 'app.accountingConsole.emptyActivityTitle' | transloco }}</h2>
+            <p>{{ 'app.accountingConsole.emptyActivityDescription' | transloco }}</p>
+          </div>
+          <ion-button fill="outline" routerLink="/app/accounting/console/journals">
+            {{ 'app.accountingConsole.navigation.journals' | transloco }}
+          </ion-button>
+        </section>
+      }
+    } @else if (view === 'accounts') {
+      <section class="panel chart-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>{{ 'app.accountingConsole.chartTitle' | transloco }}</h2>
+            <p>{{ 'app.accountingConsole.chartDescription' | transloco }}</p>
+          </div>
+          <span class="template-label">
+            {{ accountCount() }} {{ 'app.accountingConsole.accountsCount' | transloco }}
+          </span>
+        </div>
+        @if (highlightedAccount) {
+          <ion-note class="highlight-note">
+            {{ 'app.accountingConsole.highlightedAccount' | transloco }} {{ highlightedAccount }}
+          </ion-note>
+        }
+        @if (isLoadingAccounts()) {
+          <div class="loading-state" role="status">
+            <ion-spinner name="crescent"></ion-spinner>
+            <span>{{ 'app.accountingConsole.loadingAccounts' | transloco }}</span>
+          </div>
+        } @else if (accountLoadFailed()) {
+          <div class="empty-template error-state" role="alert">
+            <ion-icon [icon]="icons.alert" aria-hidden="true"></ion-icon>
+            <div>
+              <p>{{ 'app.accountingConsole.accountLoadError' | transloco }}</p>
+              <ion-button fill="clear" (click)="loadAccounts()">
+                {{ 'app.accountingConsole.retry' | transloco }}
+              </ion-button>
+            </div>
+          </div>
+        } @else {
+          <ion-searchbar
+            [value]="accountSearch()"
+            [placeholder]="'app.accountingConsole.searchAccounts' | transloco"
+            [attr.aria-label]="'app.accountingConsole.searchAccounts' | transloco"
+            (ionInput)="onAccountSearch($event)"
+          ></ion-searchbar>
+          @if (accountCount() === 0) {
+            <div class="empty-template" role="status">
+              <ion-icon [icon]="icons.alert" aria-hidden="true"></ion-icon>
+              <p>{{ 'app.accountingConsole.noAccounts' | transloco }}</p>
+            </div>
+          } @else {
+            <ion-accordion-group [multiple]="true">
+              @for (group of visibleGroups(); track group.code) {
+                <ion-accordion [value]="group.code">
+                  <ion-item slot="header" lines="full">
+                    <ion-icon
+                      slot="start"
+                      [icon]="groupNatureIcon(group.code)"
+                      aria-hidden="true"
+                    ></ion-icon>
+                    <ion-label>
+                      <div class="accordion-heading">
+                        <span class="group-code">{{ group.code }}</span>
+                        <strong>{{ ('app.accountingConsole.groups.' + group.nameKey) | transloco }}</strong>
+                      </div>
+                    </ion-label>
+                    <ion-chip slot="end" [color]="demoData() ? 'primary' : 'medium'" [attr.aria-label]="'app.accountingConsole.balanceUnavailable' | transloco">
+                      <ion-icon [icon]="icons.balance" aria-hidden="true"></ion-icon>
+                      <ion-label>{{ formatDemoAmount(demoGroupBalance(group.code)) }}</ion-label>
+                    </ion-chip>
+                    <ion-badge slot="end" color="light">{{ group.accounts.length }}</ion-badge>
+                  </ion-item>
+                  <div slot="content" class="account-group-content">
+                    <ion-accordion-group class="subgroup-accordion-group" [multiple]="true">
+                      @for (section of group.sections; track section.key) {
+                        <ion-accordion [value]="group.code + '-' + section.key">
+                          <ion-item slot="header" lines="full">
+                            <ion-icon
+                              slot="start"
+                              [icon]="section.icon"
+                              aria-hidden="true"
+                            ></ion-icon>
+                            <ion-label>
+                              <div class="accordion-heading subgroup-heading">
+                                <strong>
+                                  {{
+                                    section.labelKey.startsWith('app.')
+                                      ? (section.labelKey | transloco)
+                                      : section.labelKey
+                                  }}
+                                </strong>
+                              </div>
+                            </ion-label>
+                            <ion-chip slot="end" [color]="demoData() ? 'primary' : 'medium'" [attr.aria-label]="'app.accountingConsole.balanceUnavailable' | transloco">
+                              <ion-icon [icon]="icons.balance" aria-hidden="true"></ion-icon>
+                              <ion-label>{{ formatDemoAmount(demoSectionBalance(section.accounts)) }}</ion-label>
+                            </ion-chip>
+                            <ion-badge slot="end" color="light">
+                              {{ section.accounts.length }}
+                            </ion-badge>
+                          </ion-item>
+                          <div slot="content" class="subgroup-content">
+                            <div class="table-scroll">
+                              <table>
+                                <thead>
+                                  <tr>
+                                    <th>{{ 'app.accountingConsole.table.code' | transloco }}</th>
+                                    <th>{{ 'app.accountingConsole.table.account' | transloco }}</th>
+                                    <th>{{ 'app.accountingConsole.table.balance' | transloco }}</th>
+                                    <th>{{ 'app.accountingConsole.table.type' | transloco }}</th>
+                                    <th>{{ 'app.accountingConsole.table.actions' | transloco }}</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  @for (account of section.accounts; track account.code) {
+                                    <tr [class.highlighted]="highlightedAccount === account.code">
+                                      <td>
+                                        <a
+                                          [routerLink]="['/app/accounting/console/journals']"
+                                          [queryParams]="{ account: account.code }"
+                                        >
+                                          {{ account.code }}
+                                        </a>
+                                      </td>
+                                      <td>
+                                        <div
+                                          class="account-name-cell"
+                                          [style.padding-inline-start]="(accountDepth(account) * 1.25) + 'rem'"
+                                        >
+                                          <ion-icon
+                                            [icon]="accountNatureIcon(account)"
+                                            aria-hidden="true"
+                                          ></ion-icon>
+                                          <span>{{ accountDetailName(account) }}</span>
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <ion-chip [color]="demoData() ? 'primary' : 'medium'" [attr.aria-label]="'app.accountingConsole.balanceUnavailable' | transloco">
+                                          <ion-icon [icon]="icons.balance" aria-hidden="true"></ion-icon>
+                                          <ion-label>{{ formatDemoAmount(demoAccountBalance(account.code)) }}</ion-label>
+                                        </ion-chip>
+                                      </td>
+                                      <td>
+                                        <ion-chip [color]="account.is_system ? 'tertiary' : 'success'">
+                                          <ion-icon
+                                            [icon]="account.is_system ? icons.systemAccount : icons.customAccount"
+                                            aria-hidden="true"
+                                          ></ion-icon>
+                                          <ion-label>
+                                            {{
+                                              account.is_system
+                                                ? ('app.accountingConsole.systemAccount' | transloco)
+                                                : ('app.accountingConsole.customAccount.label' | transloco)
+                                            }}
+                                          </ion-label>
+                                        </ion-chip>
+                                      </td>
+                                      <td>
+                                        @if (account.is_leaf) {
+                                          <ion-button
+                                            size="small"
+                                            fill="clear"
+                                            [attr.aria-label]="'app.accountingConsole.customAccount.addUnder' | transloco: { account: accountDetailName(account) }"
+                                            (click)="openCustomAccountModal(account)"
+                                          >
+                                            <ion-icon slot="start" [icon]="icons.customAccount" aria-hidden="true"></ion-icon>
+                                            {{ 'app.accountingConsole.customAccount.add' | transloco }}
+                                          </ion-button>
+                                        } @else {
+                                          <ion-note>{{ 'app.accountingConsole.hasDetails' | transloco }}</ion-note>
+                                        }
+                                      </td>
+                                    </tr>
+                                  }
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </ion-accordion>
+                      }
+                    </ion-accordion-group>
+                  </div>
+                </ion-accordion>
+              } @empty {
+                <p class="no-results">{{ 'app.accountingConsole.noAccountsFound' | transloco }}</p>
+              }
+            </ion-accordion-group>
+          }
+        }
+
+        <ion-modal
+          [isOpen]="isCustomAccountModalOpen()"
+          [attr.aria-label]="'app.accountingConsole.customAccount.title' | transloco"
+          (ionModalDidDismiss)="closeCustomAccountModal()"
+        >
+          <ng-template>
+            <ion-header>
+              <ion-toolbar>
+                <ion-title>{{ 'app.accountingConsole.customAccount.title' | transloco }}</ion-title>
+                <ion-button
+                  slot="end"
+                  fill="clear"
+                  [disabled]="isSavingCustomAccount()"
+                  [attr.aria-label]="'app.accountingConsole.customAccount.cancel' | transloco"
+                  (click)="closeCustomAccountModal()"
+                >
+                  {{ 'app.accountingConsole.customAccount.cancel' | transloco }}
+                </ion-button>
+              </ion-toolbar>
+            </ion-header>
+            <ion-content class="custom-account-form">
+              <div class="custom-account-form__body">
+                @if (customAccountParent(); as parent) {
+                  <p>
+                    {{ 'app.accountingConsole.customAccount.parent' | transloco }}
+                    <strong>{{ parent.code }} · {{ accountDetailName(parent) }}</strong>
+                  </p>
+                }
+                <p>{{ 'app.accountingConsole.customAccount.codeNote' | transloco }}</p>
+                <ion-input
+                  [label]="'app.accountingConsole.customAccount.nameAr' | transloco"
+                  labelPlacement="stacked"
+                  maxlength="80"
+                  [value]="customAccountName().ar"
+                  (ionInput)="setCustomAccountName('ar', $event)"
+                ></ion-input>
+                <ion-input
+                  [label]="'app.accountingConsole.customAccount.nameEn' | transloco"
+                  labelPlacement="stacked"
+                  maxlength="80"
+                  [value]="customAccountName().en"
+                  (ionInput)="setCustomAccountName('en', $event)"
+                ></ion-input>
+                <ion-input
+                  [label]="'app.accountingConsole.customAccount.nameFr' | transloco"
+                  labelPlacement="stacked"
+                  maxlength="80"
+                  [value]="customAccountName().fr"
+                  (ionInput)="setCustomAccountName('fr', $event)"
+                ></ion-input>
+                @if (customAccountError(); as errorKey) {
+                  <p class="custom-account-form__error" role="alert">{{ errorKey | transloco }}</p>
+                }
+                <ion-button
+                  expand="block"
+                  [disabled]="isSavingCustomAccount()"
+                  (click)="saveCustomAccount()"
+                >
+                  {{ 'app.accountingConsole.customAccount.save' | transloco }}
+                </ion-button>
+              </div>
+            </ion-content>
+          </ng-template>
+        </ion-modal>
+      </section>
+    } @else if (view === 'journals') {
+      @if (demoData(); as dataset) {
+        <section class="demo-journal-list">
+          @for (entry of dataset.entries; track entry.id) {
+            <article class="panel demo-journal-card">
+              <header>
+                <div>
+                  <h2>{{ entry.description[language()] }}</h2>
+                  <p>{{ entry.reference }} · {{ entry.posted_at }}</p>
+                </div>
+                <ion-chip color="tertiary">
+                  <ion-label>{{ demoSourceKey(entry.source) | transloco }}</ion-label>
+                </ion-chip>
+              </header>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>{{ 'app.accountingConsole.table.code' | transloco }}</th>
+                      <th>{{ 'app.accountingConsole.table.account' | transloco }}</th>
+                      <th>{{ 'app.accountingConsole.table.debit' | transloco }}</th>
+                      <th>{{ 'app.accountingConsole.table.credit' | transloco }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (line of entry.lines; track line.account_code) {
+                      <tr>
+                        <td>{{ line.account_code }}</td>
+                        <td>{{ accountName(line.account_code) }}</td>
+                        <td>{{ formatDemoAmount(line.debit) }}</td>
+                        <td>{{ formatDemoAmount(line.credit) }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          }
+        </section>
+      } @else {
+        <section class="panel empty-panel">
+          <ion-icon [icon]="icons.journals" aria-hidden="true"></ion-icon>
+          <h2>{{ 'app.accountingConsole.emptyJournalsTitle' | transloco }}</h2>
+          <p>{{ 'app.accountingConsole.demo.empty' | transloco }}</p>
+          <ion-button fill="outline" (click)="seedDemoData()" [disabled]="isSeedingDemoData()">
+            {{ 'app.accountingConsole.demo.create' | transloco }}
+          </ion-button>
+        </section>
+      }
+    } @else if (view === 'ledger') {
+      @if (demoData()) {
+        <section class="panel demo-ledger-panel">
+          @if (accountFilter) {
+            <ion-note>{{ 'app.accountingConsole.accountFilter' | transloco }} {{ accountFilter }}</ion-note>
+          }
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>{{ 'app.accountingConsole.table.date' | transloco }}</th>
+                  <th>{{ 'app.accountingConsole.table.code' | transloco }}</th>
+                  <th>{{ 'app.accountingConsole.table.account' | transloco }}</th>
+                  <th>{{ 'app.accountingConsole.table.journal' | transloco }}</th>
+                  <th>{{ 'app.accountingConsole.table.debit' | transloco }}</th>
+                  <th>{{ 'app.accountingConsole.table.credit' | transloco }}</th>
+                  <th>{{ 'app.accountingConsole.table.runningBalance' | transloco }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of demoLedgerRows(); track row.entry.id + '-' + row.line.account_code) {
+                  <tr>
+                    <td>{{ row.entry.posted_at }}</td>
+                    <td>{{ row.line.account_code }}</td>
+                    <td>{{ accountName(row.line.account_code) }}</td>
+                    <td>{{ row.entry.reference }}</td>
+                    <td>{{ formatDemoAmount(row.line.debit) }}</td>
+                    <td>{{ formatDemoAmount(row.line.credit) }}</td>
+                    <td>{{ formatDemoAmount(row.balance) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      } @else {
+        <section class="panel empty-panel">
+          <ion-icon [icon]="icons.ledger" aria-hidden="true"></ion-icon>
+          <h2>{{ 'app.accountingConsole.emptyLedgerTitle' | transloco }}</h2>
+          <p>{{ 'app.accountingConsole.demo.empty' | transloco }}</p>
+          <ion-button fill="outline" (click)="seedDemoData()" [disabled]="isSeedingDemoData()">
+            {{ 'app.accountingConsole.demo.create' | transloco }}
+          </ion-button>
+        </section>
+      }
+    } @else {
+      <section class="panel statement-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>{{ ('app.accountingConsole.views.' + view + '.title') | transloco }}</h2>
+            <p>
+              {{
+                demoData()
+                  ? ('app.accountingConsole.demo.statementNotice' | transloco)
+                  : ('app.accountingConsole.demo.empty' | transloco)
+              }}
+            </p>
+          </div>
+          <ion-badge [color]="demoData() ? 'tertiary' : 'light'">
+            {{
+              demoData()
+                ? ('app.accountingConsole.demo.label' | transloco)
+                : ('app.accountingConsole.emptyStatement' | transloco)
+            }}
+          </ion-badge>
+        </div>
+        @if (demoSummary(); as summary) {
+          @if (view === 'balance-sheet') {
+            <div class="statement-row">
+              <span>{{ 'app.accountingConsole.metrics.assets' | transloco }}</span>
+              <strong>{{ formatDemoAmount(summary.assets) }}</strong>
+            </div>
+            <div class="statement-row">
+              <span>{{ 'app.accountingConsole.metrics.liabilities' | transloco }}</span>
+              <strong>{{ formatDemoAmount(summary.liabilities) }}</strong>
+            </div>
+            <div class="statement-row">
+              <span>{{ 'app.accountingConsole.metrics.equity' | transloco }}</span>
+              <strong>{{ formatDemoAmount(summary.equity) }}</strong>
+            </div>
+            <div class="statement-row">
+              <span>{{ 'app.accountingConsole.demo.balanceCheck' | transloco }}</span>
+              <ion-chip [color]="summary.isBalanced ? 'success' : 'danger'">
+                <ion-label>
+                  {{
+                    summary.isBalanced
+                      ? ('app.accountingConsole.demo.balanced' | transloco)
+                      : ('app.accountingConsole.demo.unbalanced' | transloco)
+                  }}
+                </ion-label>
+              </ion-chip>
+            </div>
+          } @else {
+            @for (key of ['revenue', 'expenses', 'netResult']; track key) {
+              <div class="statement-row">
+                <span>{{ ('app.accountingConsole.metrics.' + key) | transloco }}</span>
+                <strong>{{ formatDemoAmount(overviewMetric(key)) }}</strong>
+              </div>
+            }
+          }
+        } @else {
+          @if (view === 'balance-sheet') {
+            @for (key of ['assets', 'liabilities', 'equity']; track key) {
+              <div class="statement-row">
+                <span>{{ ('app.accountingConsole.groups.' + key) | transloco }}</span>
+                <strong>—</strong>
+              </div>
+            }
+          } @else {
+            @for (key of ['revenue', 'expenses', 'netResult']; track key) {
+              <div class="statement-row">
+                <span>{{ ('app.accountingConsole.metrics.' + key) | transloco }}</span>
+                <strong>—</strong>
+              </div>
+            }
+          }
+          <ion-button fill="outline" (click)="seedDemoData()" [disabled]="isSeedingDemoData()">
+            {{ 'app.accountingConsole.demo.create' | transloco }}
+          </ion-button>
+        }
+      </section>
+    }
+  </main>
+</ion-content>

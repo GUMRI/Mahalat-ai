@@ -1,0 +1,474 @@
+{
+  "demo": {
+    "title": "Démo d’internationalisation",
+    "description": "Changez de langue pour tester les traductions et le formatage selon la région.",
+    "language": "Langue",
+    "greeting": "Bonjour ! Ce message est traduit.",
+    "activeLocale": "Paramètres régionaux actifs",
+    "number": "Nombre",
+    "currency": "Devise",
+    "date": "Date"
+  },
+  "auth": {
+    "language": "Langue",
+    "loading": "Chargement de votre compte",
+    "working": "Veuillez patienter...",
+    "brand": {
+      "eyebrow": "Gérez votre boutique plus simplement",
+      "title": "Toute votre boutique, au même endroit.",
+      "description": "Suivez vos ventes, vos stocks et les soldes clients dans un espace conçu pour les commerces de proximité.",
+      "promise": "Vendez plus vite. Suivez mieux. Consacrez-vous à votre boutique."
+    },
+    "form": {
+      "eyebrow": "Bienvenue chez Mahalat",
+      "signInTitle": "Heureux de vous revoir",
+      "signUpTitle": "Créez votre compte",
+      "signInDescription": "Connectez-vous pour gérer votre boutique et suivre vos activités quotidiennes.",
+      "signUpDescription": "Créez un compte, puis configurez votre boutique en quelques étapes.",
+      "google": "Continuer avec Google",
+      "orEmail": "ou continuer avec votre e-mail",
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "vous@exemple.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Saisissez votre mot de passe",
+      "passwordHint": "Utilisez au moins 6 caractères.",
+      "signInButton": "Se connecter",
+      "signUpButton": "Créer un compte",
+      "noAccount": "Nouveau sur Mahalat ?",
+      "hasAccount": "Vous avez déjà un compte ?",
+      "createAccount": "Créer un compte",
+      "signInLink": "Se connecter",
+      "terms": "En continuant, vous acceptez les conditions d’utilisation et la politique de confidentialité de Mahalat."
+    },
+    "signedIn": {
+      "eyebrow": "Tout est prêt",
+      "title": "Bienvenue chez Mahalat",
+      "signOut": "Se déconnecter"
+    },
+    "access": {
+      "title": "Accès à une boutique requis",
+      "description": "Ce compte est déjà associé à une boutique. Demandez au propriétaire de vous accorder ou de rétablir votre accès."
+    },
+    "setup": {
+      "eyebrow": "Quelques détails pour commencer",
+      "progress": "Progression de la configuration",
+      "loadErrorTitle": "Impossible de charger votre boutique",
+      "loadErrorDescription": "Vous êtes connecté, mais les informations de votre boutique n’ont pas pu être vérifiées. Réessayez.",
+      "loadError": "Impossible de charger les informations de votre boutique. Vérifiez votre connexion puis réessayez.",
+      "saveError": "Impossible d’enregistrer votre boutique. Vérifiez votre connexion et vos autorisations puis réessayez.",
+      "retry": "Réessayer",
+      "steps": {
+        "1": {
+          "title": "Parlez-nous de votre boutique",
+          "description": "Indiquez son nom et le type de produits que vous vendez."
+        },
+        "2": {
+          "title": "Configurez votre espace",
+          "description": "Choisissez votre région et les options dont vous pourriez avoir besoin."
+        },
+        "3": {
+          "title": "Prêt à démarrer",
+          "description": "Vérifiez vos informations avant de créer votre espace boutique."
+        }
+      },
+      "logo": "Logo de la boutique",
+      "chooseLogo": "Ajouter un logo",
+      "logoHint": "PNG, JPG ou WebP · 2 Mo maximum · facultatif",
+      "invalidLogo": "Choisissez une image PNG, JPG ou WebP.",
+      "logoTooLarge": "Choisissez une image de moins de 2 Mo.",
+      "shopName": "Nom de la boutique",
+      "shopNamePlaceholder": "ex. Le Marché du coin",
+      "businessType": "Type d’activité",
+      "businessTypes": {
+        "grocery": "Épicerie",
+        "clothing": "Vêtements",
+        "perfumery": "Parfumerie",
+        "bookstore": "Librairie",
+        "cafe": "Café"
+      },
+      "country": "Pays ou région",
+      "countries": {
+        "TN": "Tunisie",
+        "DZ": "Algérie",
+        "MA": "Maroc",
+        "FR": "France",
+        "US": "États-Unis"
+      },
+      "currency": "Devise de la boutique",
+      "currencyHint": "Suggérée selon votre pays. Vous pourrez la modifier plus tard.",
+      "packageKicker": "Adapté à votre activité",
+      "recommended": "Recommandé",
+      "packages": {
+        "grocery": {
+          "title": "Commerce de proximité",
+          "description": "Encaissement rapide et gestion des stocks du quotidien."
+        },
+        "clothing": {
+          "title": "Mode et commerce",
+          "description": "Une configuration flexible pour les collections, ventes et stocks."
+        },
+        "perfumery": {
+          "title": "Commerce spécialisé",
+          "description": "Un espace simple pour les produits sélectionnés et les clients fidèles."
+        },
+        "bookstore": {
+          "title": "Librairie",
+          "description": "Gérez ventes et stocks au même endroit."
+        },
+        "cafe": {
+          "title": "Café et restauration",
+          "description": "Un parcours rapide au comptoir pendant le service."
+        }
+      },
+      "coreApps": "Espace inclus",
+      "pointOfSale": "Point de vente",
+      "accounting": "Comptabilité",
+      "extensionsTitle": "Options facultatives",
+      "extensions": {
+        "electronicPayments": "Paiements électroniques",
+        "advancedReports": "Rapports supplémentaires",
+        "eInvoicing": "Facturation électronique"
+      },
+      "extensionDescriptions": {
+        "electronicPayments": "Activez les paiements par carte et numériques.",
+        "advancedReports": "Consultez des analyses plus détaillées de votre activité.",
+        "eInvoicing": "Préparez-vous à la facturation électronique compatible."
+      },
+      "ownerRole": "Propriétaire",
+      "review": {
+        "shop": "Votre boutique",
+        "country": "Région",
+        "currency": "Devise",
+        "role": "Votre accès",
+        "extensions": "Options",
+        "noExtensions": "Aucune sélectionnée"
+      },
+      "templateNote": "Le plan comptable standard sera créé avec la branche principale lors de l’inscription de votre boutique.",
+      "back": "Retour",
+      "continue": "Continuer",
+      "finish": "Créer ma boutique"
+    },
+    "errors": {
+      "generic": "Une erreur s’est produite. Veuillez réessayer.",
+      "emailInUse": "Un compte existe déjà avec cette adresse. Essayez de vous connecter.",
+      "invalidEmail": "Saisissez une adresse e-mail valide.",
+      "invalidCredentials": "Cette adresse e-mail et ce mot de passe ne correspondent pas.",
+      "weakPassword": "Choisissez un mot de passe plus sûr d’au moins 6 caractères.",
+      "googleCancelled": "La connexion Google a été annulée.",
+      "popupBlocked": "Votre navigateur a bloqué la fenêtre Google. Autorisez les fenêtres pop-up et réessayez.",
+      "network": "Une erreur réseau a interrompu la connexion. Vérifiez votre connexion puis réessayez."
+    }
+  },
+  "app": {
+      "navigation": {
+        "home": "Gestion commerce",
+        "accounting": "Comptabilité",
+        "workers": "Agents IA",
+        "settings": "Paramètres",
+        "pos": "Caisse"
+      },
+      "sections": {
+        "home": "Gestion commerce",
+        "accounting": "Console comptable",
+        "workers": "Agents IA",
+        "settings": "Paramètres",
+        "pos": "Point de vente"
+      },
+      "signOut": "Se déconnecter",
+      "profileMenu": {
+        "label": "Menu du compte",
+        "nameFallback": "Propriétaire de boutique"
+      },
+      "shopLoadError": "Impossible de charger les informations de la boutique. Actualisez la page ou reconnectez-vous.",
+      "signOutError": "Impossible de vous déconnecter. Veuillez réessayer.",
+      "comingSoon": "Bientôt disponible",
+      "home": {
+        "eyebrow": "Votre boutique en un coup d’œil",
+        "welcome": "Bienvenue chez",
+        "description": "Retrouvez ici l’activité quotidienne et les prochaines étapes utiles.",
+        "openPos": "Ouvrir la caisse",
+        "metrics": {
+          "sales": "Ventes",
+          "profit": "Bénéfice estimé",
+          "debts": "Dettes clients",
+          "stock": "Alertes de stock",
+          "waitingForActivity": "Disponible après les premières opérations"
+        },
+        "firstSteps": {
+          "title": "Prêt pour votre première vente ?",
+          "description": "Ouvrez le point de vente pour démarrer. Les opérations confirmées mettront ce résumé à jour.",
+          "startSale": "Démarrer une vente"
+        }
+      },
+      "accountingConsole": {
+        "eyebrow": "Comptabilité",
+        "status": "Plan comptable · branche principale",
+        "export": "Exporter",
+        "exportUnavailable": "Exportation indisponible tant que les données comptables ne sont pas connectées",
+        "navigationLabel": "Sections comptables",
+        "summaryLabel": "Résumé des soldes",
+        "noPostedData": "Aucune donnée comptable connectée",
+        "chartSummaryTitle": "Plan comptable standard",
+        "chartSummaryDescription": "Comptes système et comptes détaillés ajoutés pour la branche actuelle.",
+        "accountsCount": "comptes",
+        "openChart": "Ouvrir le plan comptable",
+        "emptyActivityTitle": "Les opérations comptables apparaîtront ici",
+        "emptyActivityDescription": "Une fois connecté, le moteur comptable générera des écritures équilibrées après confirmation d’une opération. Aucune écriture n’est créée depuis cet écran.",
+        "integrityNote": "Les écritures sont en lecture seule. Le moteur les génère à partir des opérations confirmées ; les corrections passent par des extournes ou ajustements documentés.",
+        "chartTitle": "Plan comptable",
+        "chartDescription": "Le plan présente les comptes système et les comptes détaillés ajoutés, sans solde d’ouverture supposé.",
+        "loadingAccounts": "Chargement des comptes de la branche...",
+        "accountLoadError": "Impossible de charger ou d’initialiser le plan comptable. Vérifiez la connexion et les autorisations puis réessayez.",
+        "retry": "Réessayer",
+        "searchAccounts": "Rechercher par code ou nom de compte",
+        "noAccounts": "Aucun compte n’est enregistré pour cette branche.",
+        "noAccountsFound": "Aucun compte ne correspond à votre recherche.",
+        "highlightedAccount": "Compte mis en évidence :",
+        "systemAccount": "Compte système",
+        "demo": {
+          "label": "Données de démonstration",
+          "create": "Charger les données de démonstration",
+          "banner": "Cet exemple est enregistré séparément dans Firestore. Il ne s’agit pas d’écritures comptabilisées et il n’affecte pas les données opérationnelles de la boutique.",
+          "empty": "Aucune donnée de démonstration n’est disponible. Chargez un exemple séparé des écritures réelles.",
+          "loadError": "Impossible de charger les données comptables de démonstration. Vérifiez la connexion et les autorisations, puis réessayez.",
+          "seedError": "Impossible de préparer les données de démonstration. Vérifiez les comptes imputables, la devise et les autorisations, puis réessayez.",
+          "statementNotice": "Les résultats sont calculés à partir du jeu de démonstration séparé.",
+          "balanceCheck": "Vérification de l’équation comptable",
+          "balanced": "Équilibré",
+          "unbalanced": "Déséquilibré",
+          "sources": {
+            "ownerContribution": "Apport du propriétaire",
+            "purchase": "Achat",
+            "sale": "Vente",
+            "costOfSale": "Coût des marchandises vendues",
+            "customerCollection": "Encaissement client",
+            "supplierPayment": "Paiement fournisseur",
+            "operatingExpense": "Charge d’exploitation",
+            "ownerWithdrawal": "Retrait du propriétaire"
+          }
+        },
+        "balanceUnavailable": "Aucun solde comptabilisé n’est disponible",
+        "hasDetails": "Contient des comptes détaillés",
+        "sections": {
+          "currentAssets": "Actifs courants",
+          "nonCurrentAssets": "Immobilisations",
+          "currentLiabilities": "Passifs courants",
+          "nonCurrentLiabilities": "Passifs à long terme"
+        },
+        "customAccount": {
+          "label": "Compte personnalisé",
+          "add": "Ajouter un détail",
+          "addUnder": "Ajouter un compte détaillé sous {{account}}",
+          "title": "Ajouter un compte détaillé",
+          "parent": "Compte parent :",
+          "codeNote": "Le code sera généré séquentiellement sous le compte parent.",
+          "nameAr": "Nom en arabe",
+          "nameEn": "Nom en anglais",
+          "nameFr": "Nom en français",
+          "invalidName": "Saisissez un nom dans les trois langues, de 80 caractères maximum chacun.",
+          "saveError": "Impossible de créer le compte. Vérifiez le compte parent et la connexion, puis réessayez.",
+          "save": "Créer le compte",
+          "cancel": "Annuler"
+        },
+        "emptyJournalsTitle": "Aucune écriture pour le moment",
+        "emptyJournalsDescription": "Les écritures apparaîtront ici une fois le moteur connecté aux opérations de la boutique. Elles ne peuvent pas être créées ou modifiées manuellement.",
+        "accountFilter": "Filtré par compte :",
+        "backToOverview": "Retour au résumé",
+        "emptyLedgerTitle": "Le grand livre est vide",
+        "emptyLedgerDescription": "Les mouvements apparaîtront ici une fois le grand livre connecté et les opérations confirmées comptabilisées.",
+        "emptyStatement": "Aucun solde",
+        "navigation": {
+          "overview": "Résumé",
+          "accounts": "Comptes",
+          "journals": "Écritures",
+          "ledger": "Grand livre",
+          "balance-sheet": "Bilan",
+          "profit-and-loss": "Résultat"
+        },
+        "views": {
+          "overview": {
+            "title": "Résumé comptable",
+            "description": "Une vue claire des comptes et soldes enregistrés pour votre boutique."
+          },
+          "accounts": {
+            "title": "Plan comptable",
+            "description": "Un plan standard extensible par des comptes détaillés, avec classification des actifs et passifs."
+          },
+          "journals": {
+            "title": "Écritures comptables",
+            "description": "Un registre inaltérable des écritures générées par le moteur comptable."
+          },
+          "ledger": {
+            "title": "Grand livre",
+            "description": "Mouvements des comptes après comptabilisation des écritures."
+          },
+          "balance-sheet": {
+            "title": "Bilan",
+            "description": "Résumé des actifs, passifs et capitaux propres."
+          },
+          "profit-and-loss": {
+            "title": "Résultat",
+            "description": "Résumé des produits, charges et résultat de l’activité."
+          }
+        },
+        "groups": {
+          "assets": "Actifs",
+          "liabilities": "Passifs",
+          "equity": "Capitaux propres",
+          "revenue": "Produits",
+          "expenses": "Charges"
+        },
+        "metrics": {
+          "assets": "Actifs",
+          "liabilities": "Passifs",
+          "equity": "Capitaux propres",
+          "revenue": "Produits",
+          "expenses": "Charges",
+          "netResult": "Résultat net"
+        },
+        "classifications": {
+          "current": "Courant",
+          "non_current": "Non courant",
+          "notApplicable": "—"
+        },
+        "table": {
+          "code": "Code",
+          "account": "Compte",
+          "classification": "Classification",
+          "balance": "Solde",
+          "type": "Type",
+          "actions": "Actions",
+          "date": "Date",
+          "journal": "Référence",
+          "debit": "Débit",
+          "credit": "Crédit",
+          "runningBalance": "Solde courant",
+          "actions": "Actions"
+        }
+      },
+      "workers": {
+        "title": "Des agents utiles en arrière-plan",
+        "description": "Les agents proposeront des suggestions à vérifier. Ils ne créeront ni ne modifieront de données sans votre confirmation.",
+        "agents": {
+          "products": "Assistant produits",
+          "inventory": "Surveillance du stock",
+          "sales": "Analyse des ventes",
+          "dataQuality": "Qualité des données",
+          "accounting": "Surveillance comptable"
+        },
+        "agentDescriptions": {
+          "products": "Suggérer des informations et repérer les doublons.",
+          "inventory": "Signaler les produits à surveiller.",
+          "sales": "Repérer les tendances utiles des ventes et produits.",
+          "dataQuality": "Repérer les informations manquantes ou incohérentes.",
+          "accounting": "Signaler les points comptables à vérifier."
+        }
+      },
+      "settings": {
+        "title": "Préférences de votre espace",
+        "description": "Choisissez la langue de l’interface et consultez séparément les paramètres régionaux de la boutique.",
+        "languageTitle": "Langue de l’interface",
+        "languageDescription": "Ce choix modifie les textes de l’interface, pas les paramètres régionaux de la boutique.",
+        "language": "Langue",
+        "regionTitle": "Région de la boutique",
+        "country": "Pays",
+        "currency": "Devise",
+        "regionHint": "Les paramètres régionaux proviennent de la configuration de la boutique."
+      },
+      "pos": {
+        "title": "Point de vente",
+        "description": "Un encaissement rapide pour votre boutique.",
+        "nextTitle": "La caisse est la prochaine étape",
+        "nextDescription": "L’espace est prêt pour le parcours de vente. La recherche de produits, les commandes simultanées enregistrées et les paiements seront ajoutés ensuite."
+      },
+      "assistant": {
+        "open": "Ouvrir l’assistant",
+        "close": "Fermer l’assistant",
+        "title": "Assistant Mahalat",
+        "comingSoon": "L’assistant sera disponible ici. Il vous présentera les modifications à vérifier avant tout enregistrement."
+      },
+      "businessManagement": {
+        "navigation": {
+          "label": "Pages de gestion de l’activité",
+          "overview": "Vue d’ensemble",
+          "invoices": "Factures",
+          "vouchers": "Bons",
+          "products": "Produits et services",
+          "inventory": "Stock",
+          "parties": "Clients et fournisseurs",
+          "users": "Utilisateurs et accès",
+          "shifts": "Services et caisse",
+          "shops": "Boutiques"
+        },
+        "overview": {
+          "title": "Gestion de l’activité",
+          "eyebrow": "Votre boutique en un coup d’œil",
+          "welcome": "Que souhaitez-vous faire aujourd’hui ?",
+          "description": "Démarrez une vente ou accédez directement à une partie de votre boutique.",
+          "openPos": "Ouvrir la caisse",
+          "quickActions": "Actions rapides",
+          "quickActionsDescription": "Les tâches courantes sont accessibles en un geste.",
+          "newSale": "Nouvelle vente",
+          "cashMovements": "Mouvements de caisse",
+          "manageShop": "Gérer votre boutique",
+          "manageShopDescription": "Choisissez une section pour consulter et gérer ses données.",
+          "invoicesDescription": "Ventes, achats et retours",
+          "vouchersDescription": "Encaissements, paiements et dépenses",
+          "productsDescription": "Articles, services et prix",
+          "inventoryDescription": "Quantités et mouvements de stock",
+          "partiesDescription": "Personnes et contacts professionnels",
+          "shiftsDescription": "État des services et mouvements de caisse",
+          "usersDescription": "Personnes autorisées à travailler dans cette boutique",
+          "shopsDescription": "Gérer vos boutiques",
+          "activityNotice": "Les résumés d’activité apparaîtront lorsque les documents confirmés seront connectés.",
+          "viewInvoices": "Voir les factures"
+        },
+        "pages": {
+          "invoices": {
+            "title": "Factures",
+            "description": "Consultez les ventes, achats et retours de cette boutique.",
+            "empty": "Les factures ne sont pas encore connectées à cette page."
+          },
+          "vouchers": {
+            "title": "Bons",
+            "description": "Gérez les encaissements, paiements, dépenses et mouvements de caisse.",
+            "empty": "Les bons ne sont pas encore connectés à cette page."
+          },
+          "products": {
+            "title": "Produits et services",
+            "description": "Gérez les articles et services proposés par cette boutique.",
+            "empty": "Les produits et services ne sont pas encore connectés à cette page."
+          },
+          "inventory": {
+            "title": "Stock",
+            "description": "Consultez les quantités disponibles et les mouvements de stock.",
+            "empty": "Le stock n’est pas encore connecté à cette page."
+          },
+          "parties": {
+            "title": "Clients et fournisseurs",
+            "description": "Regroupez chaque personne ou entreprise dans une liste avec ses rôles.",
+            "empty": "Les clients et fournisseurs ne sont pas encore connectés à cette page."
+          },
+          "users": {
+            "title": "Utilisateurs et accès",
+            "description": "Gérez les personnes qui peuvent travailler dans cette boutique.",
+            "empty": "La gestion des utilisateurs n’est pas encore connectée à cette page."
+          },
+          "shifts": {
+            "title": "Services et caisse",
+            "description": "Consultez l’état des services et les mouvements de caisse.",
+            "empty": "Les services et la caisse ne sont pas encore connectés à cette page."
+          },
+          "shops": {
+            "title": "Boutiques",
+            "description": "Gérez les boutiques associées à votre compte.",
+            "empty": "La gestion et le changement de boutique ne sont pas encore disponibles."
+          }
+        },
+        "errors": {
+          "shopLoad": "Impossible de charger les informations de la boutique. Veuillez réessayer.",
+          "signOut": "Impossible de vous déconnecter. Veuillez réessayer."
+        }
+      }
+  }
+}

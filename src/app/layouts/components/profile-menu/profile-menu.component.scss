@@ -1,0 +1,14 @@
+:host{display:inline-flex;flex:none}
+.profile-menu-trigger{--color:var(--ion-color-primary-contrast);--padding-start:.55rem;--padding-end:.55rem}
+ion-popover{--width:19rem;--offset-y:.35rem}
+ion-list{padding:.35rem}
+.profile-summary{--min-height:4.5rem}
+.profile-summary ion-avatar{display:grid;width:2.75rem;height:2.75rem;place-items:center;background:var(--ion-color-primary-tint);color:var(--ion-color-primary-contrast)}
+.profile-summary ion-avatar img{width:100%;height:100%;object-fit:cover}
+.avatar-initial{font-size:1.1rem;font-weight:700}
+.profile-summary ion-label strong{display:block;overflow:hidden;text-overflow:ellipsis}
+.profile-summary ion-label p{margin:.25rem 0 0;color:var(--ion-color-medium);font-size:.8rem}
+.language-item{--min-height:3.25rem}
+.language-item ion-select{max-width:10rem;text-align:end}
+.settings-item{--min-height:3rem}
+.sign-out-item{--min-height:3rem;--color:var(--ion-color-danger)}

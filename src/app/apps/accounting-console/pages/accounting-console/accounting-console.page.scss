@@ -1,0 +1,69 @@
+:host{display:block;height:100%}
+.console-main{width:min(100%,76rem);margin-inline:auto;padding:clamp(1rem,3vw,2rem);padding-bottom:calc(6rem + env(safe-area-inset-bottom))}
+.console-heading,.panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.heading-actions{display:flex;align-items:center;gap:.55rem}
+.eyebrow{margin:0;color:var(--ion-color-primary);font-size:.76rem;font-weight:750;letter-spacing:.04em}
+h1{margin:.35rem 0;font-size:clamp(1.5rem,3vw,2rem);font-weight:750}
+.heading-description,.panel-heading p{max-width:48rem;margin:.35rem 0;color:var(--ion-color-medium);line-height:1.6}
+.status-badge{display:flex;align-items:center;gap:.35rem;padding:.5rem .65rem}
+.console-navigation{display:flex;gap:.35rem;overflow-x:auto;padding:.2rem 0 1rem}
+.console-navigation ion-button{flex:0 0 auto;--border-radius:999px;font-size:.78rem}
+.integrity-note{display:flex;align-items:flex-start;gap:.65rem;margin:0 0 1rem;padding:.85rem 1rem;border:1px solid rgba(var(--ion-color-warning-rgb),.26);border-radius:.85rem;background:rgba(var(--ion-color-warning-rgb),.07);color:var(--ion-color-dark)}
+.integrity-note ion-icon{flex:0 0 auto;margin-top:.1rem;color:var(--ion-color-warning-shade);font-size:1.2rem}
+.integrity-note p{margin:0;font-size:.84rem;line-height:1.55}
+.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.8rem}
+.summary-card,.panel,.empty-ledger{border:1px solid rgba(var(--ion-color-dark-rgb),.08);border-radius:1rem;background:#fff}
+.summary-card{display:grid;gap:.45rem;padding:1rem}
+.summary-card span,.summary-card small{color:var(--ion-color-medium)}
+.summary-card strong{font-size:1.5rem}
+.summary-card small{font-size:.72rem}
+.panel{margin-top:1rem;padding:clamp(1rem,2vw,1.4rem)}
+.panel h2,.empty-ledger h2{margin:0;font-size:1.05rem}
+.panel-heading p{margin:.25rem 0 0;font-size:.83rem}
+.group-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.55rem;margin-top:1rem}
+.group-summary a{display:grid;grid-template-columns:1fr auto;gap:.3rem .5rem;padding:.75rem;border:1px solid rgba(var(--ion-color-dark-rgb),.08);border-radius:.75rem;color:inherit;text-decoration:none}
+.group-summary a>span:nth-child(2){grid-column:1/-1;font-size:.84rem}
+.group-code{color:var(--ion-color-medium);font-size:.72rem}
+.group-summary a strong{grid-column:2;grid-row:2;align-self:center;color:var(--ion-color-primary);font-size:.8rem}
+.empty-ledger{display:flex;align-items:center;gap:1rem;margin-top:1rem;padding:1rem}
+.empty-ledger>ion-icon,.empty-panel>ion-icon{flex:0 0 auto;color:var(--ion-color-primary);font-size:1.5rem}
+.empty-ledger p,.empty-panel p{margin:.25rem 0 0;color:var(--ion-color-medium);font-size:.84rem;line-height:1.55}
+.empty-ledger ion-button{margin-inline-start:auto;flex:0 0 auto}
+.template-label{display:inline-flex;padding:.3rem .55rem;border-radius:999px;background:rgba(var(--ion-color-warning-rgb),.1);color:var(--ion-color-warning-shade);font-size:.7rem;font-weight:650;white-space:nowrap}
+.loading-state{display:flex;align-items:center;justify-content:center;gap:.7rem;padding:3rem 1rem;color:var(--ion-color-medium)}
+.loading-state ion-spinner{width:1.2rem;height:1.2rem}
+.chart-panel ion-accordion-group{margin-top:.75rem;border:1px solid rgba(var(--ion-color-dark-rgb),.1);border-radius:.85rem;background:#fff;overflow:hidden}
+.chart-panel ion-accordion{--background:#fff;--color:var(--ion-color-dark)}
+.chart-panel ion-accordion+ion-accordion{border-top:1px solid rgba(var(--ion-color-dark-rgb),.08)}
+.chart-panel ion-item[slot=header]{--background:#fff;--min-height:3.8rem}
+.chart-panel .subgroup-accordion-group{margin:0;border:0;border-radius:0}
+.chart-panel .subgroup-accordion-group ion-item[slot=header]{--min-height:3.2rem;--padding-start:1rem}
+.subgroup-heading strong{font-size:.84rem}
+.accordion-heading{display:flex;align-items:center;gap:.7rem}
+.accordion-heading strong{font-size:.9rem}
+.account-group-content{padding:.25rem .85rem .85rem}
+.subgroup-content{padding:0 .75rem .5rem}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;text-align:start;font-size:.82rem}
+th,td{padding:.7rem .55rem;border-bottom:1px solid rgba(var(--ion-color-dark-rgb),.07);text-align:start;white-space:nowrap}
+th{color:var(--ion-color-medium);font-size:.72rem;font-weight:650}
+td a{color:var(--ion-color-primary);font-weight:700;text-decoration:none}
+tr.highlighted{background:rgba(var(--ion-color-warning-rgb),.1)}
+.no-results{padding:1rem;color:var(--ion-color-medium);text-align:center}
+.empty-template{display:flex;align-items:flex-start;gap:.65rem;margin-top:1rem;padding:1rem;border-radius:.8rem;background:rgba(var(--ion-color-warning-rgb),.07);color:var(--ion-color-dark)}
+.empty-template ion-icon{flex:0 0 auto;margin-top:.1rem;color:var(--ion-color-warning-shade);font-size:1.25rem}
+.empty-template p{margin:0;font-size:.86rem;line-height:1.55}
+.empty-panel{display:grid;justify-items:center;gap:.8rem;padding:3rem 1.25rem;text-align:center}
+.empty-panel h2{margin:0;font-size:1.08rem}
+.empty-panel p{max-width:36rem}
+.statement-panel{max-width:54rem}
+.statement-row{display:flex;justify-content:space-between;gap:1rem;padding:.9rem 0;border-bottom:1px solid rgba(var(--ion-color-dark-rgb),.08)}
+.statement-row strong{color:var(--ion-color-medium)}
+.account-name-cell{display:flex;align-items:center;gap:.5rem}
+.account-name-cell ion-icon{flex:0 0 auto;color:var(--ion-color-primary)}
+.custom-account-form__body{display:grid;gap:1rem;padding:1rem}
+.custom-account-form__body p{margin:0;line-height:1.5}
+.custom-account-form__error{color:var(--ion-color-danger)}
+.custom-account-form ion-input{--border-color:var(--ion-color-step-300);--border-radius:.5rem}
+@media(max-width:760px){.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.group-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.console-heading{align-items:flex-start;flex-direction:column}.empty-ledger{align-items:flex-start;flex-wrap:wrap}.empty-ledger ion-button{margin-inline-start:0}}
+@media(max-width:400px){.summary-card{padding:.75rem}.status-badge{font-size:.67rem}}

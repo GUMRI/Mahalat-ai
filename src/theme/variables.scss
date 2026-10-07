@@ -1,2 +1,119 @@
 // For information on how to create your own theme, please refer to:
 // https://ionicframework.com/docs/theming/
+
+:root {
+  /* ================================
+     BRAND
+     ================================ */
+
+  --ion-color-primary: #6B21A8;
+  --ion-color-primary-rgb: 107, 33, 168;
+  --ion-color-primary-contrast: #FFFFFF;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #5E1D94;
+  --ion-color-primary-tint: #7A37B1;
+
+
+  /* ================================
+     SECONDARY
+     Actions / Navigation / Links
+     ================================ */
+
+  --ion-color-secondary: #2563EB;
+  --ion-color-secondary-rgb: 37, 99, 235;
+  --ion-color-secondary-contrast: #FFFFFF;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #2157CF;
+  --ion-color-secondary-tint: #3B73ED;
+
+
+  /* ================================
+     TERTIARY
+     Supporting accent
+     ================================ */
+
+  --ion-color-tertiary: #0891B2;
+  --ion-color-tertiary-rgb: 8, 145, 178;
+  --ion-color-tertiary-contrast: #FFFFFF;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #087F9D;
+  --ion-color-tertiary-tint: #229BB9;
+
+
+  /* ================================
+     SUCCESS
+     Paid / Profit / Available
+     ================================ */
+
+  --ion-color-success: #16A34A;
+  --ion-color-success-rgb: 22, 163, 74;
+  --ion-color-success-contrast: #FFFFFF;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #138F41;
+  --ion-color-success-tint: #2DAC5C;
+
+
+  /* ================================
+     WARNING
+     Low stock / Pending
+     ================================ */
+
+  --ion-color-warning: #D97706;
+  --ion-color-warning-rgb: 217, 119, 6;
+  --ion-color-warning-contrast: #FFFFFF;
+  --ion-color-warning-contrast-rgb: 255, 255, 255;
+  --ion-color-warning-shade: #BF6905;
+  --ion-color-warning-tint: #DD851F;
+
+
+  /* ================================
+     DANGER
+     Delete / Refund / Loss
+     ================================ */
+
+  --ion-color-danger: #DC2626;
+  --ion-color-danger-rgb: 220, 38, 38;
+  --ion-color-danger-contrast: #FFFFFF;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #C22121;
+  --ion-color-danger-tint: #E03C3C;
+
+
+  /* ================================
+     LIGHT
+     Neutral surfaces
+     ================================ */
+
+  --ion-color-light: #F8FAFC;
+  --ion-color-light-rgb: 248, 250, 252;
+  --ion-color-light-contrast: #0F172A;
+  --ion-color-light-contrast-rgb: 15, 23, 42;
+  --ion-color-light-shade: #DADEE0;
+  --ion-color-light-tint: #F9FBFC;
+
+
+  /* ================================
+     MEDIUM
+     Secondary text / icons / borders
+     ================================ */
+
+  --ion-color-medium: #64748B;
+  --ion-color-medium-rgb: 100, 116, 139;
+  --ion-color-medium-contrast: #FFFFFF;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #58667A;
+  --ion-color-medium-tint: #748297;
+
+
+  /* ================================
+     DARK
+     Text / strong UI elements
+     ================================ */
+
+  --ion-color-dark: #0F172A;
+  --ion-color-dark-rgb: 15, 23, 42;
+  --ion-color-dark-contrast: #FFFFFF;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #0D1425;
+  --ion-color-dark-tint: #273247;
+}

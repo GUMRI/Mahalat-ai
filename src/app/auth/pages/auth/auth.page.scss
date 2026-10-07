@@ -1,0 +1,11 @@
+:host{display:block;min-height:100vh;color:var(--ion-color-dark)}
+ion-content{--background:#fbfaf8}
+.auth-layout{display:grid;min-height:100vh;grid-template-columns:.9fr 1.1fr}
+.form-panel{position:relative;display:flex;min-width:0;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:5rem clamp(1rem,5vw,5rem) 2rem}
+.topbar{position:absolute;inset:1.25rem 2rem auto auto;z-index:2;display:flex;align-items:center}
+.language-picker{display:flex;align-items:center;gap:.4rem;color:var(--ion-color-medium);font-size:.8rem}
+.language-picker ion-select{min-height:2.5rem;--color:var(--ion-color-dark)}
+app-auth-brand.mobile-brand{display:none;color:var(--ion-color-primary)}
+.auth-card{width:min(100%,29rem);margin:0;border:1px solid #0f172a0d;border-radius:1rem;box-shadow:0 1rem 3rem #0f172a12;--background:#fff}
+@media(max-width:820px){.auth-layout{grid-template-columns:1fr}app-auth-brand:not(.mobile-brand){display:none}.form-panel{min-height:100vh;justify-content:flex-start;padding:6rem 1.2rem 2rem}.topbar{inset:1rem 1.2rem auto;justify-content:space-between}app-auth-brand.mobile-brand{display:inline-flex}.auth-card{margin-top:1rem}}
+@media(max-width:480px){.form-panel{padding-inline:.9rem}}

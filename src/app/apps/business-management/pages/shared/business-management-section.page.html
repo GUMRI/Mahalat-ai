@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <div class="header-brand" slot="start">
+      <app-rotating-logo
+        [shopName]="shop()?.name ?? null"
+        [shopLogoUrl]="shop()?.logoUrl ?? null"
+      ></app-rotating-logo>
+      <ion-title>{{ 'app.businessManagement.overview.title' | transloco }}</ion-title>
+    </div>
+    <app-profile-menu
+      slot="end"
+      [isSigningOut]="isSigningOut()"
+      (signOutRequested)="signOut()"
+    ></app-profile-menu>
+  </ion-toolbar>
+  <ion-toolbar class="business-management-toolbar">
+    <nav class="business-navigation" [attr.aria-label]="'app.businessManagement.navigation.label' | transloco">
+      @for (item of navigationItems; track item.key) {
+        <a
+          class="business-navigation-item"
+          [class.business-navigation-item-active]="page() === item.key"
+          [routerLink]="item.route"
+          [attr.aria-current]="page() === item.key ? 'page' : null"
+        >
+          <ion-icon [icon]="item.icon" aria-hidden="true"></ion-icon>
+          <span>{{ item.label | transloco }}</span>
+        </a>
+      }
+    </nav>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="business-management-content" [fullscreen]="true">
+  <main class="business-management-main">
+    @if (shopLoadFailed()) {
+      <ion-text color="danger" role="alert">{{ 'app.businessManagement.errors.shopLoad' | transloco }}</ion-text>
+    }
+    @if (signOutFailed()) {
+      <ion-text color="danger" role="alert">{{ 'app.businessManagement.errors.signOut' | transloco }}</ion-text>
+    }
+
+    <section class="page-heading">
+      <h1>{{ content.title | transloco }}</h1>
+      <p>{{ content.description | transloco }}</p>
+    </section>
+
+    @if (page() === 'overview') {
+      <ng-content select="[overview-content]"></ng-content>
+    } @else {
+      <section class="empty-state" aria-live="polite">
+        <ion-icon [icon]="pageIcon" aria-hidden="true"></ion-icon>
+        <p>{{ content.emptyMessage | transloco }}</p>
+        <ion-button fill="outline" [routerLink]="content.actionRoute">{{ content.actionLabel | transloco }}</ion-button>
+      </section>
+    }
+  </main>
+</ion-content>

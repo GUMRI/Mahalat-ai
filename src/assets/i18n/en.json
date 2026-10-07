@@ -1,0 +1,473 @@
+{
+  "demo": {
+    "title": "Internationalization demo",
+    "description": "Change the language to test translated content and locale-aware formatting.",
+    "language": "Language",
+    "greeting": "Hello! This message is translated.",
+    "activeLocale": "Active locale",
+    "number": "Number",
+    "currency": "Currency",
+    "date": "Date"
+  },
+  "auth": {
+    "language": "Language",
+    "loading": "Loading your account",
+    "working": "Please wait...",
+    "brand": {
+      "eyebrow": "A simpler way to run your shop",
+      "title": "Your whole shop, in one place.",
+      "description": "Keep up with sales, stock and customer balances in one workspace built for independent shops.",
+      "promise": "Quicker sales. Clearer operations. More time for your shop."
+    },
+    "form": {
+      "eyebrow": "Welcome to Mahalat",
+      "signInTitle": "Welcome back",
+      "signUpTitle": "Create your account",
+      "signInDescription": "Sign in to manage your shop and keep your daily work moving.",
+      "signUpDescription": "Create an account, then set up your shop in a few simple steps.",
+      "google": "Continue with Google",
+      "orEmail": "or continue with email",
+      "email": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "passwordHint": "Use at least 6 characters.",
+      "signInButton": "Sign in",
+      "signUpButton": "Create account",
+      "noAccount": "New to Mahalat?",
+      "hasAccount": "Already have an account?",
+      "createAccount": "Create an account",
+      "signInLink": "Sign in",
+      "terms": "By continuing, you agree to use Mahalat in accordance with its terms and privacy policy."
+    },
+    "signedIn": {
+      "eyebrow": "You’re all set",
+      "title": "Welcome to Mahalat",
+      "signOut": "Sign out"
+    },
+    "access": {
+      "title": "Shop access is required",
+      "description": "This account is already linked to a shop. Ask the shop owner to grant or restore your access."
+    },
+    "setup": {
+      "eyebrow": "A few details to get started",
+      "progress": "Shop setup progress",
+      "loadErrorTitle": "We couldn’t load your shop",
+      "loadErrorDescription": "Your account is signed in, but we couldn’t check its shop details. Please try again.",
+      "loadError": "We couldn’t load your shop details. Check your connection and retry.",
+      "saveError": "We couldn’t save your shop setup. Check your connection and permissions, then try again.",
+      "retry": "Try again",
+      "steps": {
+        "1": {
+          "title": "Tell us about your shop",
+          "description": "Start with the name customers know and what you sell."
+        },
+        "2": {
+          "title": "Set up your workspace",
+          "description": "Choose your business region and the extras you may need."
+        },
+        "3": {
+          "title": "Ready to open",
+          "description": "Review your details before creating your shop workspace."
+        }
+      },
+      "logo": "Shop logo",
+      "chooseLogo": "Add a logo",
+      "logoHint": "PNG, JPG or WebP · up to 2 MB · optional",
+      "invalidLogo": "Choose a PNG, JPG or WebP image.",
+      "logoTooLarge": "Choose an image smaller than 2 MB.",
+      "shopName": "Shop name",
+      "shopNamePlaceholder": "e.g. The Corner Market",
+      "businessType": "Business type",
+      "businessTypes": {
+        "grocery": "Grocery",
+        "clothing": "Clothing",
+        "perfumery": "Perfumery",
+        "bookstore": "Bookshop",
+        "cafe": "Café"
+      },
+      "country": "Country or region",
+      "countries": {
+        "TN": "Tunisia",
+        "DZ": "Algeria",
+        "MA": "Morocco",
+        "FR": "France",
+        "US": "United States"
+      },
+      "currency": "Shop currency",
+      "currencyHint": "Suggested from your country. You can change it later.",
+      "packageKicker": "A good fit for your business",
+      "recommended": "Recommended",
+      "packages": {
+        "grocery": {
+          "title": "Everyday Retail",
+          "description": "Quick checkout and stock tools for daily essentials."
+        },
+        "clothing": {
+          "title": "Fashion & Retail",
+          "description": "A flexible setup for collections, sales and stock."
+        },
+        "perfumery": {
+          "title": "Specialty Retail",
+          "description": "A simple workspace for curated products and repeat customers."
+        },
+        "bookstore": {
+          "title": "Bookshop",
+          "description": "Keep sales and product stock organized in one place."
+        },
+        "cafe": {
+          "title": "Café & Food",
+          "description": "A quick counter workflow for busy service."
+        }
+      },
+      "coreApps": "Included workspace",
+      "pointOfSale": "Point of sale",
+      "accounting": "Accounting",
+      "extensionsTitle": "Optional add-ons",
+      "extensions": {
+        "electronicPayments": "Electronic payments",
+        "advancedReports": "Additional reports",
+        "eInvoicing": "E-invoicing"
+      },
+      "extensionDescriptions": {
+        "electronicPayments": "Enable card and digital payment options.",
+        "advancedReports": "Get deeper views of shop performance.",
+        "eInvoicing": "Prepare for supported electronic invoices."
+      },
+      "ownerRole": "Owner",
+      "review": {
+        "shop": "Your shop",
+        "country": "Region",
+        "currency": "Currency",
+        "role": "Your access",
+        "extensions": "Add-ons",
+        "noExtensions": "None selected"
+      },
+      "templateNote": "The standard chart of accounts will be created with your main branch when your shop is registered.",
+      "back": "Back",
+      "continue": "Continue",
+      "finish": "Create my shop"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "emailInUse": "An account already exists for this email. Try signing in instead.",
+      "invalidEmail": "Enter a valid email address.",
+      "invalidCredentials": "That email and password combination wasn’t recognized.",
+      "weakPassword": "Choose a stronger password with at least 6 characters.",
+      "googleCancelled": "Google sign-in was cancelled.",
+      "popupBlocked": "Your browser blocked the Google sign-in window. Allow pop-ups and try again.",
+      "network": "A network error interrupted sign-in. Check your connection and retry."
+    }
+  },
+  "app": {
+      "navigation": {
+        "home": "Business Management",
+        "accounting": "Accounting",
+        "workers": "AI Workers",
+        "settings": "Settings",
+        "pos": "POS"
+      },
+      "sections": {
+        "home": "Business Management",
+        "accounting": "Accounting console",
+        "workers": "AI Workers",
+        "settings": "Settings",
+        "pos": "Point of sale"
+      },
+      "signOut": "Sign out",
+      "profileMenu": {
+        "label": "Account menu",
+        "nameFallback": "Shop owner"
+      },
+      "shopLoadError": "Shop details could not be loaded. Please refresh or sign in again.",
+      "signOutError": "Could not sign out. Please try again.",
+      "comingSoon": "Coming soon",
+      "home": {
+        "eyebrow": "Your shop at a glance",
+        "welcome": "Welcome to",
+        "description": "Your daily shop activity and useful next steps will live here.",
+        "openPos": "Open point of sale",
+        "metrics": {
+          "sales": "Sales",
+          "profit": "Estimated profit",
+          "debts": "Customer debts",
+          "stock": "Stock alerts",
+          "waitingForActivity": "Available after shop activity"
+        },
+        "firstSteps": {
+          "title": "Ready for your first sale?",
+          "description": "Open the point of sale to start a sale. Your confirmed activity will update this overview.",
+          "startSale": "Start a sale"
+        }
+      },
+      "accountingConsole": {
+        "eyebrow": "Accounting",
+        "status": "Chart of accounts · main branch",
+        "export": "Export",
+        "exportUnavailable": "Export is unavailable until accounting data is connected",
+        "navigationLabel": "Accounting sections",
+        "summaryLabel": "Balance summary",
+        "noPostedData": "No accounting data connected yet",
+        "chartSummaryTitle": "Standard chart of accounts",
+        "chartSummaryDescription": "System accounts and the detailed accounts you add for the current branch.",
+        "accountsCount": "accounts",
+        "openChart": "Open chart of accounts",
+        "emptyActivityTitle": "Accounting activity will appear here",
+        "emptyActivityDescription": "Once connected, the accounting engine will generate balanced entries after an operation is confirmed. Entries are not created from this screen.",
+        "integrityNote": "Journal entries are read-only. The engine creates them from confirmed operations; corrections use documented reversals or adjustments.",
+        "chartTitle": "Chart of accounts",
+        "chartDescription": "The chart shows system accounts and added detailed accounts, without assumed opening balances.",
+        "loadingAccounts": "Loading branch accounts...",
+        "accountLoadError": "Could not load or initialize the chart of accounts. Check your connection and permissions, then retry.",
+        "retry": "Retry",
+        "searchAccounts": "Search by account code or name",
+        "noAccounts": "No accounts are saved for this branch.",
+        "noAccountsFound": "No accounts match your search.",
+        "highlightedAccount": "Highlighted account:",
+        "systemAccount": "System account",
+        "balanceUnavailable": "No posted balances are available yet",
+        "hasDetails": "Has detailed accounts",
+        "demo": {
+          "label": "Demo data",
+          "create": "Load demo data",
+          "banner": "This sample dataset is stored separately in Firestore. It is not posted journal data and does not affect operational shop records.",
+          "empty": "No demo data is available yet. Load a sample dataset kept separate from actual journal entries.",
+          "loadError": "Could not load accounting demo data. Check your connection and permissions, then retry.",
+          "seedError": "Could not prepare accounting demo data. Check leaf accounts, currency and permissions, then retry.",
+          "statementNotice": "Results are calculated from the separate demo dataset.",
+          "balanceCheck": "Accounting equation check",
+          "balanced": "Balanced",
+          "unbalanced": "Unbalanced",
+          "sources": {
+            "ownerContribution": "Owner contribution",
+            "purchase": "Purchase",
+            "sale": "Sale",
+            "costOfSale": "Cost of goods sold",
+            "customerCollection": "Customer collection",
+            "supplierPayment": "Supplier payment",
+            "operatingExpense": "Operating expense",
+            "ownerWithdrawal": "Owner withdrawal"
+          }
+        },
+        "sections": {
+          "currentAssets": "Current assets",
+          "nonCurrentAssets": "Fixed assets",
+          "currentLiabilities": "Current liabilities",
+          "nonCurrentLiabilities": "Long-term liabilities"
+        },
+        "customAccount": {
+          "label": "Custom account",
+          "add": "Add detail",
+          "addUnder": "Add detailed account under {{account}}",
+          "title": "Add detailed account",
+          "parent": "Parent account:",
+          "codeNote": "The code will be generated sequentially under the parent account.",
+          "nameAr": "Name in Arabic",
+          "nameEn": "Name in English",
+          "nameFr": "Name in French",
+          "invalidName": "Enter a name in all three languages, each no longer than 80 characters.",
+          "saveError": "Could not create the account. Check the parent account and connection, then retry.",
+          "save": "Create account",
+          "cancel": "Cancel"
+        },
+        "emptyJournalsTitle": "No journal entries yet",
+        "emptyJournalsDescription": "Entries will appear here once the engine is connected to shop operations. They cannot be created or edited manually.",
+        "accountFilter": "Filtered by account:",
+        "backToOverview": "Back to overview",
+        "emptyLedgerTitle": "The general ledger is empty",
+        "emptyLedgerDescription": "Account activity appears here once the general ledger is connected and entries from confirmed operations are posted.",
+        "emptyStatement": "No balances",
+        "navigation": {
+          "overview": "Overview",
+          "accounts": "Accounts",
+          "journals": "Journals",
+          "ledger": "General ledger",
+          "balance-sheet": "Balance sheet",
+          "profit-and-loss": "Profit and loss"
+        },
+        "views": {
+          "overview": {
+            "title": "Accounting overview",
+            "description": "A clear view of the accounts and balances recorded for your shop."
+          },
+          "accounts": {
+            "title": "Chart of accounts",
+            "description": "A standard chart that supports detailed accounts, with assets and liabilities classified by type."
+          },
+          "journals": {
+            "title": "Journal entries",
+            "description": "An immutable record of entries generated by the accounting engine."
+          },
+          "ledger": {
+            "title": "General ledger",
+            "description": "Account activity after journal entries are posted."
+          },
+          "balance-sheet": {
+            "title": "Balance sheet",
+            "description": "A summary of assets, liabilities and equity."
+          },
+          "profit-and-loss": {
+            "title": "Profit and loss",
+            "description": "A summary of revenue, expenses and business results."
+          }
+        },
+        "groups": {
+          "assets": "Assets",
+          "liabilities": "Liabilities",
+          "equity": "Equity",
+          "revenue": "Revenue",
+          "expenses": "Expenses"
+        },
+        "metrics": {
+          "assets": "Assets",
+          "liabilities": "Liabilities",
+          "equity": "Equity",
+          "revenue": "Revenue",
+          "expenses": "Expenses",
+          "netResult": "Net result"
+        },
+        "classifications": {
+          "current": "Current",
+          "non_current": "Non-current",
+          "notApplicable": "—"
+        },
+        "table": {
+          "code": "Code",
+          "account": "Account",
+          "classification": "Classification",
+          "balance": "Balance",
+          "type": "Type",
+          "actions": "Actions",
+          "date": "Date",
+          "journal": "Reference",
+          "debit": "Debit",
+          "credit": "Credit",
+          "runningBalance": "Running balance"
+        }
+      },
+      "workers": {
+        "title": "Helpful background workers",
+        "description": "Workers will surface useful suggestions for your review. They will not create or change shop records without your confirmation.",
+        "agents": {
+          "products": "Product helper",
+          "inventory": "Stock watcher",
+          "sales": "Sales insights",
+          "dataQuality": "Data quality",
+          "accounting": "Accounting monitor"
+        },
+        "agentDescriptions": {
+          "products": "Suggest product details and spot duplicates.",
+          "inventory": "Flag stock that may need attention.",
+          "sales": "Find useful sales and product patterns.",
+          "dataQuality": "Spot missing or inconsistent information.",
+          "accounting": "Flag accounting issues for review."
+        }
+      },
+      "settings": {
+        "title": "Your workspace preferences",
+        "description": "Choose the language for the interface and review the shop’s regional defaults separately.",
+        "languageTitle": "Interface language",
+        "languageDescription": "This changes interface text, not the shop’s regional settings.",
+        "language": "Language",
+        "regionTitle": "Shop region",
+        "country": "Country",
+        "currency": "Currency",
+        "regionHint": "Regional settings are based on the shop setup."
+      },
+      "pos": {
+        "title": "Point of sale",
+        "description": "A fast checkout for your shop.",
+        "nextTitle": "Checkout is the next step",
+        "nextDescription": "This workspace is ready for the POS flow. Product search, parallel saved orders and payment handling will be added next."
+      },
+      "assistant": {
+        "open": "Open assistant",
+        "close": "Close assistant",
+        "title": "Mahalat assistant",
+        "comingSoon": "The assistant workspace will be connected here. It will prepare changes for your review before anything is saved."
+      },
+      "businessManagement": {
+        "navigation": {
+          "label": "Business Management pages",
+          "overview": "Overview",
+          "invoices": "Invoices",
+          "vouchers": "Vouchers",
+          "products": "Products & services",
+          "inventory": "Inventory",
+          "parties": "Customers & suppliers",
+          "users": "Users & access",
+          "shifts": "Shifts & cash",
+          "shops": "Shops"
+        },
+        "overview": {
+          "title": "Business Management",
+          "eyebrow": "Your shop, at a glance",
+          "welcome": "What would you like to do today?",
+          "description": "Open a sale or jump straight to an area of your shop.",
+          "openPos": "Open point of sale",
+          "quickActions": "Quick actions",
+          "quickActionsDescription": "Common tasks are one tap away.",
+          "newSale": "New sale",
+          "cashMovements": "Cash movements",
+          "manageShop": "Manage your shop",
+          "manageShopDescription": "Choose an area to view and manage its records.",
+          "invoicesDescription": "Sales, purchases and returns",
+          "vouchersDescription": "Receipts, payments and expenses",
+          "productsDescription": "Items, services and prices",
+          "inventoryDescription": "Quantities and stock movements",
+          "partiesDescription": "People and business contacts",
+          "shiftsDescription": "Shift status and cash activity",
+          "usersDescription": "People who can work in this shop",
+          "shopsDescription": "Manage your shop spaces",
+          "activityNotice": "Shop activity summaries will appear here after confirmed records are connected.",
+          "viewInvoices": "View invoices"
+        },
+        "pages": {
+          "invoices": {
+            "title": "Invoices",
+            "description": "Review sales, purchases, and returns for this shop.",
+            "empty": "Invoice records are not connected to this page yet."
+          },
+          "vouchers": {
+            "title": "Vouchers",
+            "description": "Manage receipts, payments, expenses, and cash movements.",
+            "empty": "Voucher records are not connected to this page yet."
+          },
+          "products": {
+            "title": "Products & services",
+            "description": "Manage the items and services offered by this shop.",
+            "empty": "Product and service records are not connected to this page yet."
+          },
+          "inventory": {
+            "title": "Inventory",
+            "description": "Review available quantities and stock movements.",
+            "empty": "Inventory records are not connected to this page yet."
+          },
+          "parties": {
+            "title": "Customers & suppliers",
+            "description": "Keep each person or business in one list with their shop roles.",
+            "empty": "Customer and supplier records are not connected to this page yet."
+          },
+          "users": {
+            "title": "Users & access",
+            "description": "Manage the people who can work in this shop.",
+            "empty": "Shop user management is not connected to this page yet."
+          },
+          "shifts": {
+            "title": "Shifts & cash",
+            "description": "Review shift status and cash activity.",
+            "empty": "Shift and cash records are not connected to this page yet."
+          },
+          "shops": {
+            "title": "Shops",
+            "description": "Manage the shops connected to your account.",
+            "empty": "Shop switching and shop management are not connected to this page yet."
+          }
+        },
+        "errors": {
+          "shopLoad": "Shop details could not be loaded. Please retry.",
+          "signOut": "Could not sign out. Please try again."
+        }
+      }
+  }
+}

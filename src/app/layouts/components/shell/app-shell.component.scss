@@ -1,0 +1,13 @@
+:host{display:block;height:100dvh}
+ion-tabs{height:100%}
+ion-tab-bar{--background:var(--ion-color-light);--border:1px solid rgba(var(--ion-color-dark-rgb),.08);padding-bottom:env(safe-area-inset-bottom)}
+ion-tab-button{--color:var(--ion-color-medium);--color-selected:var(--ion-color-primary);font-size:.72rem}
+ion-tab-button ion-icon{font-size:1.25rem}
+.assistant-fab{inset-block-end:calc(4.8rem + env(safe-area-inset-bottom));inset-inline-end:1rem}
+.assistant-fab ion-fab-button{--background:var(--ion-color-primary);--color:#fff;--box-shadow:0 5px 18px rgba(70,27,96,.25)}
+.assistant-content{--background:var(--ion-color-light)}
+.assistant-intro{display:grid;min-height:60vh;place-content:center;justify-items:center;padding:2rem;text-align:center}
+.assistant-intro ion-icon{color:var(--ion-color-primary);font-size:2.4rem}
+.assistant-intro h2{margin:1rem 0 .3rem;font-size:1.25rem}
+.assistant-intro p{max-width:22rem;color:var(--ion-color-medium);line-height:1.6}
+@media(min-width:821px){.assistant-fab{inset-block-end:1.5rem}}

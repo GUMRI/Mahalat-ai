@@ -25,6 +25,10 @@
     "@capacitor/keyboard": "8.0.6",
     "@capacitor/status-bar": "8.0.4",
     "@ionic/angular": "^9.0.0",
+    "@jsverse/transloco": "^9.0.0-alpha.4",
+    "@jsverse/transloco-locale": "^9.0.0-alpha.4",
+    "@jsverse/transloco-persist-lang": "^9.0.0-alpha.4",
+    "firebase": "^12.19.0",
     "ionicons": "^8.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

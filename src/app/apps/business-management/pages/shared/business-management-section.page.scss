@@ -1,0 +1,128 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.header-brand {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.header-brand ion-title {
+  position: static;
+  width: auto;
+  padding-inline: 0;
+  color: var(--ion-color-primary-contrast);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.business-management-toolbar {
+  --background: var(--ion-color-light);
+  --color: var(--ion-color-dark);
+}
+
+.business-navigation {
+  display: flex;
+  width: 100%;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding: 0.3rem clamp(0.75rem, 3vw, 2rem);
+  scrollbar-width: thin;
+}
+
+.business-navigation-item {
+  display: inline-flex;
+  min-height: 2.65rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 0.7rem;
+  padding: 0.55rem 0.8rem;
+  color: var(--ion-color-medium-shade);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.business-navigation-item:focus-visible {
+  outline: 3px solid var(--ion-color-primary);
+  outline-offset: 2px;
+}
+
+.business-navigation-item-active {
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+}
+
+.business-navigation-item ion-icon {
+  font-size: 1.05rem;
+}
+
+.business-management-content {
+  --background: var(--ion-color-light);
+}
+
+.business-management-main {
+  width: min(100%, 76rem);
+  margin-inline: auto;
+  padding: clamp(1rem, 3vw, 2.25rem);
+}
+
+.page-heading h1 {
+  margin: 0;
+  color: var(--ion-color-dark);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 750;
+}
+
+.page-heading p {
+  margin: 0.55rem 0 0;
+  color: var(--ion-color-medium-shade);
+  line-height: 1.55;
+}
+
+.overview-empty,
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  border: 1px solid rgba(var(--ion-color-medium-rgb), 0.22);
+  border-radius: 1rem;
+  background: var(--ion-color-light-tint);
+  padding: clamp(1.5rem, 5vw, 3rem);
+  text-align: center;
+}
+
+.overview-empty > ion-icon,
+.empty-state > ion-icon {
+  color: var(--ion-color-primary);
+  font-size: 2rem;
+}
+
+.overview-empty p,
+.empty-state p {
+  max-width: 36rem;
+  margin: 0;
+  color: var(--ion-color-medium-shade);
+  line-height: 1.55;
+}
+
+@media (max-width: 560px) {
+  .business-navigation {
+    padding-inline: 0.65rem;
+  }
+
+  .business-navigation-item {
+    padding-inline: 0.65rem;
+  }
+
+  .business-navigation-item span {
+    font-size: 0.78rem;
+  }
+
+}

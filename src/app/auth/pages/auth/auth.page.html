@@ -1,0 +1,353 @@
+<ion-content [attr.dir]="lang.dir()" [fullscreen]="true">
+  <main class="auth-layout">
+    <app-auth-brand />
+
+    <section class="form-panel">
+      <header class="topbar">
+        <app-auth-brand class="mobile-brand" variant="compact" />
+        <label class="language-picker">
+          <span>{{ 'auth.language' | transloco }}</span>
+          <ion-select
+            interface="popover"
+            [value]="lang.locale()"
+            [aria-label]="'auth.language' | transloco"
+            (ionChange)="setLocaleFromEvent($event)"
+          >
+            @for (locale of lang.locales; track locale.code) {
+              <ion-select-option [value]="locale.code">{{ locale.label }}</ion-select-option>
+            }
+          </ion-select>
+        </label>
+      </header>
+
+      @if (auth.isLoading() || screen() === 'checkingShop') {
+        <ion-card class="auth-card auth-loading" role="status" [attr.aria-label]="'auth.loading' | transloco">
+          <ion-spinner name="crescent"></ion-spinner>
+          <ion-card-content>{{ 'auth.loading' | transloco }}</ion-card-content>
+        </ion-card>
+      } @else if (screen() === 'loadError') {
+        <ion-card class="auth-card">
+          <ion-card-header>
+            <ion-card-subtitle>{{ 'auth.setup.eyebrow' | transloco }}</ion-card-subtitle>
+            <ion-card-title>{{ 'auth.setup.loadErrorTitle' | transloco }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p class="intro">{{ 'auth.setup.loadErrorDescription' | transloco }}</p>
+            @if (errorKey(); as key) {
+              <ion-text class="error-message" role="alert">{{ key | transloco }}</ion-text>
+            }
+            <ion-button class="primary-button" expand="block" [disabled]="isSubmitting()" (click)="retryShopCheck()">
+              {{ 'auth.setup.retry' | transloco }}
+            </ion-button>
+            <ion-button class="text-button" expand="block" fill="clear" [disabled]="isSubmitting()" (click)="signOut()">
+              {{ 'auth.signedIn.signOut' | transloco }}
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      } @else if (screen() === 'accessRequired') {
+        <ion-card class="auth-card">
+          <ion-card-header>
+            <ion-card-subtitle>{{ 'auth.signedIn.eyebrow' | transloco }}</ion-card-subtitle>
+            <ion-card-title>{{ 'auth.access.title' | transloco }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p class="intro">{{ 'auth.access.description' | transloco }}</p>
+            <ion-button class="primary-button" expand="block" [disabled]="isSubmitting()" (click)="signOut()">
+              {{ 'auth.signedIn.signOut' | transloco }}
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      } @else if (screen() === 'setup') {
+        <ion-card class="auth-card setup-card">
+          <ion-card-header>
+            <div class="setup-progress" [attr.aria-label]="'auth.setup.progress' | transloco">
+              <span class="setup-step-number">{{ setupStep() }} / 3</span>
+              <ion-progress-bar [value]="setupStep() / 3"></ion-progress-bar>
+            </div>
+            <ion-card-subtitle>{{ 'auth.setup.eyebrow' | transloco }}</ion-card-subtitle>
+            <ion-card-title>{{ ('auth.setup.steps.' + setupStep() + '.title') | transloco }}</ion-card-title>
+            <p class="intro">{{ ('auth.setup.steps.' + setupStep() + '.description') | transloco }}</p>
+          </ion-card-header>
+          <ion-card-content>
+          <form (ngSubmit)="submitShopSetup()" #setupForm="ngForm">
+            @if (setupStep() === 1) {
+              <div class="logo-row">
+                <div class="logo-preview" aria-hidden="true">
+                  @if (logoPreview()) {
+                    <img [src]="logoPreview()" alt="" />
+                  } @else {
+                    <span>م</span>
+                  }
+                </div>
+                <div class="logo-copy">
+                  <strong>{{ 'auth.setup.logo' | transloco }}</strong>
+                  <label class="file-button">
+                    <input type="file" accept="image/png,image/jpeg,image/webp" (change)="onLogoChange($event)" />
+                    <span>{{ 'auth.setup.chooseLogo' | transloco }}</span>
+                  </label>
+                  <small>{{ 'auth.setup.logoHint' | transloco }}</small>
+                </div>
+              </div>
+
+              <ion-input
+                id="shopName"
+                name="shopName"
+                type="text"
+                [label]="'auth.setup.shopName' | transloco"
+                labelPlacement="stacked"
+                fill="outline"
+                [placeholder]="'auth.setup.shopNamePlaceholder' | transloco"
+                autocomplete="organization"
+                maxlength="80"
+                required
+                [ngModel]="shopName()"
+                (ngModelChange)="shopName.set($event)"
+              />
+
+              <ion-select
+                class="setup-select"
+                name="businessType"
+                interface="popover"
+                fill="outline"
+                labelPlacement="stacked"
+                [label]="'auth.setup.businessType' | transloco"
+                [value]="businessType()"
+                (ionChange)="setBusinessTypeFromEvent($event)"
+              >
+                @for (type of businessTypes; track type) {
+                  <ion-select-option [value]="type">{{ ('auth.setup.businessTypes.' + type) | transloco }}</ion-select-option>
+                }
+              </ion-select>
+            } @else if (setupStep() === 2) {
+              <div class="region-fields">
+                <ion-select
+                  class="setup-select"
+                  name="country"
+                  interface="popover"
+                  fill="outline"
+                  labelPlacement="stacked"
+                  [label]="'auth.setup.country' | transloco"
+                  [value]="countryCode()"
+                  (ionChange)="setCountryFromEvent($event)"
+                >
+                  @for (country of countries; track country.code) {
+                    <ion-select-option [value]="country.code">{{ ('auth.setup.countries.' + country.code) | transloco }}</ion-select-option>
+                  }
+                </ion-select>
+
+                  <ion-item lines="none" class="currency-field">
+                    <ion-label>
+                      <span class="field-label">{{ 'auth.setup.currency' | transloco }}</span>
+                      <div class="currency-value">
+                        <strong>{{ currencyForCountry() }}</strong>
+                        <span>{{ 'auth.setup.currencyHint' | transloco }}</span>
+                      </div>
+                    </ion-label>
+                  </ion-item>
+              </div>
+
+              <ion-card class="package-card">
+                <ion-card-header>
+                  <ion-card-subtitle>{{ 'auth.setup.packageKicker' | transloco }}</ion-card-subtitle>
+                  <ion-card-title>{{ ('auth.setup.packages.' + businessType() + '.title') | transloco }}</ion-card-title>
+                  <ion-badge>{{ 'auth.setup.recommended' | transloco }}</ion-badge>
+                </ion-card-header>
+                <ion-card-content>
+                  <p>{{ ('auth.setup.packages.' + businessType() + '.description') | transloco }}</p>
+                  <div class="package-includes">
+                    <span>{{ 'auth.setup.coreApps' | transloco }}</span>
+                    <span class="included-item"><span aria-hidden="true">✓</span>{{ 'auth.setup.pointOfSale' | transloco }}</span>
+                    <span class="included-item"><span aria-hidden="true">✓</span>{{ 'auth.setup.accounting' | transloco }}</span>
+                  </div>
+                </ion-card-content>
+              </ion-card>
+
+              <fieldset class="extensions">
+                <legend>{{ 'auth.setup.extensionsTitle' | transloco }}</legend>
+                <ion-list lines="none">
+                  @for (extension of extensionOptions; track extension) {
+                    <ion-item class="extension-option">
+                      <ion-checkbox
+                        [checked]="extensions()[extension]"
+                        labelPlacement="end"
+                        justify="start"
+                        (ionChange)="setExtension(extension, $event)"
+                      >
+                        <strong>{{ ('auth.setup.extensions.' + extension) | transloco }}</strong>
+                        <small>{{ ('auth.setup.extensionDescriptions.' + extension) | transloco }}</small>
+                      </ion-checkbox>
+                    </ion-item>
+                  }
+                </ion-list>
+              </fieldset>
+            } @else {
+              <ion-item class="review-card" lines="none">
+                @if (logoPreview()) {
+                  <img class="review-logo" slot="start" [src]="logoPreview()" alt="" />
+                } @else {
+                  <span class="review-logo review-logo-placeholder" slot="start" aria-hidden="true">م</span>
+                }
+                <ion-label class="review-shop">
+                  <span class="review-label">{{ 'auth.setup.review.shop' | transloco }}</span>
+                  <strong>{{ shopName() }}</strong>
+                  <span>{{ ('auth.setup.businessTypes.' + businessType()) | transloco }}</span>
+                </ion-label>
+              </ion-item>
+              <ion-list class="review-details" lines="inset">
+                <ion-item>
+                  <ion-label>{{ 'auth.setup.review.country' | transloco }}</ion-label>
+                  <ion-note slot="end">{{ ('auth.setup.countries.' + countryCode()) | transloco }}</ion-note>
+                </ion-item>
+                <ion-item>
+                  <ion-label>{{ 'auth.setup.review.currency' | transloco }}</ion-label>
+                  <ion-note slot="end">{{ currencyForCountry() }}</ion-note>
+                </ion-item>
+                <ion-item>
+                  <ion-label>{{ 'auth.setup.review.role' | transloco }}</ion-label>
+                  <ion-note slot="end">{{ 'auth.setup.ownerRole' | transloco }}</ion-note>
+                </ion-item>
+                <ion-item>
+                  <ion-label>{{ 'auth.setup.review.extensions' | transloco }}</ion-label>
+                  <ion-note slot="end">
+                    @if (selectedExtensions().length) {
+                      @for (extension of selectedExtensions(); track extension; let last = $last) {
+                        {{ ('auth.setup.extensions.' + extension) | transloco }}{{ last ? '' : ', ' }}
+                      }
+                    } @else {
+                      {{ 'auth.setup.review.noExtensions' | transloco }}
+                    }
+                  </ion-note>
+                </ion-item>
+              </ion-list>
+              <ion-note class="template-note">{{ 'auth.setup.templateNote' | transloco }}</ion-note>
+            }
+
+            @if (errorKey(); as key) {
+              <ion-text class="error-message" role="alert">{{ key | transloco }}</ion-text>
+            }
+
+            <div class="setup-actions">
+              @if (setupStep() > 1) {
+                <ion-button class="back-button" type="button" fill="clear" [disabled]="isSubmitting()" (click)="previousSetupStep()">
+                  {{ 'auth.setup.back' | transloco }}
+                </ion-button>
+              }
+              @if (setupStep() < 3) {
+                <ion-button class="primary-button" type="button" expand="block" [disabled]="setupStep() === 1 && (!setupForm.valid || !shopName().trim())" (click)="nextSetupStep()">
+                  {{ 'auth.setup.continue' | transloco }}
+                  <span slot="end" aria-hidden="true">→</span>
+                </ion-button>
+              } @else {
+                <ion-button class="primary-button" type="submit" expand="block" [disabled]="isSubmitting()">
+                  @if (isSubmitting()) {
+                    {{ 'auth.working' | transloco }}
+                  } @else {
+                    {{ 'auth.setup.finish' | transloco }}
+                  }
+                  <span slot="end" aria-hidden="true">→</span>
+                </ion-button>
+              }
+            </div>
+          </form>
+          </ion-card-content>
+        </ion-card>
+      } @else if (screen() === 'ready') {
+        <ion-card class="auth-card signed-in-card">
+          <ion-card-header>
+            <span class="success-mark" aria-hidden="true">✓</span>
+            <ion-card-subtitle>{{ 'auth.signedIn.eyebrow' | transloco }}</ion-card-subtitle>
+            <ion-card-title>{{ 'auth.signedIn.title' | transloco }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p class="intro">{{ auth.user()?.email }}</p>
+            <ion-button class="primary-button" expand="block" [disabled]="isSubmitting()" (click)="signOut()">
+              @if (isSubmitting()) {
+                {{ 'auth.working' | transloco }}
+              } @else {
+                {{ 'auth.signedIn.signOut' | transloco }}
+              }
+            </ion-button>
+            @if (errorKey(); as key) {
+              <ion-text class="error-message" role="alert">{{ key | transloco }}</ion-text>
+            }
+          </ion-card-content>
+        </ion-card>
+      } @else {
+        <ion-card class="auth-card">
+          <ion-card-header>
+            <ion-card-subtitle>{{ 'auth.form.eyebrow' | transloco }}</ion-card-subtitle>
+            <ion-card-title>{{ (mode() === 'signIn' ? 'auth.form.signInTitle' : 'auth.form.signUpTitle') | transloco }}</ion-card-title>
+            <p class="intro">
+            {{ (mode() === 'signIn' ? 'auth.form.signInDescription' : 'auth.form.signUpDescription') | transloco }}
+            </p>
+          </ion-card-header>
+          <ion-card-content>
+
+          <ion-button class="google-button" expand="block" fill="outline" [disabled]="isSubmitting()" (click)="submitGoogle()">
+            <ion-icon slot="start" [icon]="googleIcon" aria-hidden="true"></ion-icon>
+            {{ 'auth.form.google' | transloco }}
+          </ion-button>
+
+          <div class="divider"><span>{{ 'auth.form.orEmail' | transloco }}</span></div>
+
+          <form (ngSubmit)="submitEmail()" #authForm="ngForm">
+            <ion-input
+              id="email"
+              name="email"
+              type="email"
+              [label]="'auth.form.email' | transloco"
+              labelPlacement="stacked"
+              fill="outline"
+              [placeholder]="'auth.form.emailPlaceholder' | transloco"
+              autocomplete="email"
+              required
+              [ngModel]="email()"
+              (ngModelChange)="email.set($event)"
+            />
+
+            <ion-input
+              id="password"
+              name="password"
+              type="password"
+              class="password-input"
+              [label]="'auth.form.password' | transloco"
+              labelPlacement="stacked"
+              fill="outline"
+              [placeholder]="'auth.form.passwordPlaceholder' | transloco"
+              [attr.autocomplete]="mode() === 'signIn' ? 'current-password' : 'new-password'"
+              minlength="6"
+              required
+              [ngModel]="password()"
+              (ngModelChange)="password.set($event)"
+            />
+            @if (mode() === 'signUp') {
+              <p class="field-hint">{{ 'auth.form.passwordHint' | transloco }}</p>
+            }
+
+            @if (errorKey(); as key) {
+              <ion-text class="error-message" role="alert">{{ key | transloco }}</ion-text>
+            }
+
+            <ion-button class="primary-button" type="submit" expand="block" [disabled]="isSubmitting() || authForm.invalid">
+              @if (isSubmitting()) {
+                {{ 'auth.working' | transloco }}
+              } @else {
+                {{ (mode() === 'signIn' ? 'auth.form.signInButton' : 'auth.form.signUpButton') | transloco }}
+              }
+              <span slot="end" aria-hidden="true">→</span>
+            </ion-button>
+          </form>
+
+          <p class="mode-switch">
+            {{ (mode() === 'signIn' ? 'auth.form.noAccount' : 'auth.form.hasAccount') | transloco }}
+            <ion-button fill="clear" size="small" (click)="setMode(mode() === 'signIn' ? 'signUp' : 'signIn')">
+              {{ (mode() === 'signIn' ? 'auth.form.createAccount' : 'auth.form.signInLink') | transloco }}
+            </ion-button>
+          </p>
+          </ion-card-content>
+        </ion-card>
+        <p class="terms-note">{{ 'auth.form.terms' | transloco }}</p>
+      }
+    </section>
+  </main>
+</ion-content>

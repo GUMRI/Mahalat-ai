@@ -1,0 +1,19 @@
+<div class="logo-stage" role="img" [attr.aria-label]="logoLabel()">
+  <div class="logo-flipper" [class.logo-flipper--shop]="showShopLogo()">
+    <div class="logo-face logo-face--mahalat" aria-hidden="true">
+      <ion-avatar class="logo-avatar">
+        <img src="assets/icon/favicon.png" alt="" />
+      </ion-avatar>
+    </div>
+
+    <div class="logo-face logo-face--shop" aria-hidden="true">
+      <ion-avatar class="logo-avatar">
+        @if (shopLogoUrl() && !shopLogoFailed()) {
+          <img [src]="shopLogoUrl()" alt="" (error)="shopLogoFailed.set(true)" />
+        } @else {
+          <span class="shop-initial">{{ shopInitial() }}</span>
+        }
+      </ion-avatar>
+    </div>
+  </div>
+</div>
