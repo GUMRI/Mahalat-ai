@@ -1,28 +1,8 @@
 <div class="ion-page">
-  <ion-header class="workspace-header">
-    <ion-toolbar color="primary">
-      <div class="header-brand" slot="start">
-        <app-rotating-logo
-          [shopName]="shop()?.name ?? null"
-          [shopLogoUrl]="shop()?.logoUrl ?? null"
-        ></app-rotating-logo>
-        <ion-title>{{ sectionTitle() | transloco }}</ion-title>
-      </div>
-      <app-profile-menu
-        slot="end"
-        [isSigningOut]="isSigningOut()"
-        (signOutRequested)="signOut()"
-      ></app-profile-menu>
-    </ion-toolbar>
-  </ion-header>
-
   <ion-content class="workspace-content" [fullscreen]="true">
     <main class="workspace-main">
       @if (shopLoadFailed()) {
         <ion-text color="danger" role="alert">{{ 'app.shopLoadError' | transloco }}</ion-text>
-      }
-      @if (signOutFailed()) {
-        <ion-text color="danger" role="alert">{{ 'app.signOutError' | transloco }}</ion-text>
       }
 
       @if (section() === 'workers') {

@@ -23,13 +23,14 @@ import {
   IonText,
 } from '@ionic/angular';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FirebaseError } from 'firebase/app';
 import { logoGoogle } from 'ionicons/icons';
 import { FirebaseAuthService } from '../../../firebase/firebase-auth.service';
 import { AppLocale } from '../../../settings/i18n/i18n.config';
 import { LangService } from '../../../settings/i18n/i18n.service';
 import { AuthBrandComponent } from '../../components/auth-brand/auth-brand.component';
+import { ShopInvitationScannerComponent } from '../../components/shop-invitation-scanner/shop-invitation-scanner.component';
 import {
   BusinessType,
   CountryCode,
@@ -37,7 +38,14 @@ import {
 } from '../../service/shop-registration.service';
 
 type AuthMode = 'signIn' | 'signUp';
-type AuthScreen = 'auth' | 'checkingShop' | 'loadError' | 'setup' | 'ready' | 'accessRequired';
+type AuthScreen =
+  | 'auth'
+  | 'checkingShop'
+  | 'loadError'
+  | 'chooseShop'
+  | 'joinShop'
+  | 'setup'
+  | 'ready';
 type ExtensionKey = 'electronicPayments' | 'advancedReports' | 'eInvoicing';
 
 const BUSINESS_TYPES: BusinessType[] = [
@@ -95,12 +103,14 @@ const EXTENSION_OPTIONS: ExtensionKey[] = [
     IonText,
     TranslocoPipe,
     AuthBrandComponent,
+    ShopInvitationScannerComponent,
   ],
 })
 export class AuthPage {
   readonly googleIcon = logoGoogle;
   readonly auth = inject(FirebaseAuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   readonly lang = inject(LangService);
   readonly registration = inject(ShopRegistrationService);
   readonly mode = signal<AuthMode>('signIn');
@@ -109,6 +119,7 @@ export class AuthPage {
   readonly password = signal('');
   readonly isSubmitting = signal(false);
   readonly errorKey = signal<string | null>(null);
+  readonly invitationUrl = signal('');
 
   readonly businessTypes = BUSINESS_TYPES;
   readonly countries = COUNTRIES;
@@ -209,6 +220,44 @@ export class AuthPage {
     this.errorKey.set(null);
   }
 
+  chooseShopCreation(): void {
+    this.errorKey.set(null);
+    this.screen.set('setup');
+  }
+
+  chooseShopInvitation(): void {
+    this.errorKey.set(null);
+    this.invitationUrl.set('');
+    this.screen.set('joinShop');
+  }
+
+  backToShopChoices(): void {
+    this.errorKey.set(null);
+    this.screen.set('chooseShop');
+  }
+
+  onInvitationScanned(value: string): void {
+    this.invitationUrl.set(value);
+    this.errorKey.set(null);
+  }
+
+  async joinShop(): Promise<void> {
+    const user = this.auth.user();
+    if (!user) {
+      this.errorKey.set('auth.errors.generic');
+      return;
+    }
+    await this.runAuthAction(async () => {
+      await this.registration.joinWithInvitation(
+        user.uid,
+        user.email ?? '',
+        this.invitationUrl().trim(),
+      );
+      this.screen.set('ready');
+      await this.navigateToWorkspace();
+    });
+  }
+
   nextSetupStep(): void {
     if (this.setupStep() < 3) {
       this.errorKey.set(null);
@@ -275,8 +324,19 @@ export class AuthPage {
     try {
       const accessState = await this.registration.getAccessState(userId);
       if (request !== this.shopCheckRequest) return;
-      this.screen.set(accessState === 'linkedAccount' ? 'accessRequired' : accessState);
-      if (accessState === 'ready') await this.navigateToWorkspace();
+      if (accessState === 'ready') {
+        this.screen.set('ready');
+        await this.navigateToWorkspace();
+        return;
+      }
+      const shopId = this.route.snapshot.queryParamMap.get('shopId');
+      const invitationId = this.route.snapshot.queryParamMap.get('invitationId');
+      if (shopId && invitationId) {
+        this.invitationUrl.set(window.location.href);
+        this.screen.set('joinShop');
+      } else {
+        this.screen.set('chooseShop');
+      }
     } catch {
       if (request !== this.shopCheckRequest) return;
       this.errorKey.set('auth.setup.loadError');
@@ -325,8 +385,18 @@ export class AuthPage {
         return 'auth.errors.googleCancelled';
       case 'auth/popup-blocked':
         return 'auth.errors.popupBlocked';
-      case 'shop/setup-write-failed':
+      case 'shop/invalid-invitation':
+        return 'auth.join.errors.invalidInvitation';
+      case 'shop/invitation-email-mismatch':
+        return 'auth.join.errors.emailMismatch';
+      case 'shop/already-member':
+      case 'shop/already-linked':
+        return 'auth.join.errors.alreadyMember';
       case 'permission-denied':
+        return this.screen() === 'joinShop'
+          ? 'auth.join.errors.permissionDenied'
+          : 'auth.setup.saveError';
+      case 'shop/setup-write-failed':
       case 'storage/unauthorized':
         return 'auth.setup.saveError';
       case 'shop/invalid-logo':

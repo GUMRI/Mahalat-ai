@@ -1,20 +1,136 @@
-<ion-tabs>
-  <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="home" href="/app/home">
-      <ion-icon [icon]="icons.home" aria-hidden="true"></ion-icon>
-      <ion-label>{{ 'app.navigation.home' | transloco }}</ion-label>
-    </ion-tab-button>
-    <ion-tab-button tab="accounting" href="/app/accounting">
-      <ion-icon [icon]="icons.accounting" aria-hidden="true"></ion-icon>
-      <ion-label>{{ 'app.navigation.accounting' | transloco }}</ion-label>
-    </ion-tab-button>
-    <ion-tab-button tab="workers" href="/app/workers">
-      <ion-icon [icon]="icons.workers" aria-hidden="true"></ion-icon>
-      <ion-label>{{ 'app.navigation.workers' | transloco }}</ion-label>
-    </ion-tab-button>
-    <ion-tab-button tab="pos" href="/app/pos">
-      <ion-icon [icon]="icons.pos" aria-hidden="true"></ion-icon>
-      <ion-label>{{ 'app.navigation.pos' | transloco }}</ion-label>
-    </ion-tab-button>
-  </ion-tab-bar>
-</ion-tabs>
+<ion-menu contentId="main" menuId="platform-navigation" type="overlay">
+    <ion-header>
+      <ion-toolbar color="tertiary">
+        <ion-title>{{ 'app.navigation.menu' | transloco }}</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-accordion-group class="platform-navigation-list" [multiple]="true">
+        @for (item of navigationItems; track item.route) {
+          @if (item.children.length > 0) {
+            <ion-accordion [value]="item.route">
+              <ion-item slot="header">
+                <ion-icon slot="start" [icon]="item.icon" aria-hidden="true"></ion-icon>
+                <ion-label>{{ item.label | transloco }}</ion-label>
+              </ion-item>
+              <ion-list slot="content" lines="none">
+                @for (child of item.children; track child.route) {
+                  <ion-menu-toggle menu="platform-navigation" autoHide="false">
+                    <ion-item
+                      class="platform-navigation-child"
+                      button
+                      [routerLink]="child.route"
+                      routerLinkActive="navigation-item-active"
+                      [routerLinkActiveOptions]="{ exact: true }"
+                    >
+                      <ion-label>{{ child.label | transloco }}</ion-label>
+                    </ion-item>
+                  </ion-menu-toggle>
+                }
+              </ion-list>
+            </ion-accordion>
+          } @else {
+            <ion-menu-toggle menu="platform-navigation" autoHide="false">
+              <ion-item
+                button
+                detail="false"
+                [routerLink]="item.route"
+                routerLinkActive="navigation-item-active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                <ion-icon slot="start" [icon]="item.icon" aria-hidden="true"></ion-icon>
+                <ion-label>{{ item.label | transloco }}</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          }
+        }
+      </ion-accordion-group>
+    </ion-content>
+  </ion-menu>
+
+<div class="ion-page shell-page" id="main">
+    <ion-header>
+      <ion-toolbar color="primary">
+
+        <div class="header-brand" slot="start">
+          <ion-menu-button
+            menu="platform-navigation"
+            class="navigation-trigger"
+            [attr.aria-label]="'app.navigation.menu' | transloco"
+          ></ion-menu-button>
+          <app-rotating-logo
+            [shopName]="shop()?.name ?? null"
+            [shopLogoUrl]="shop()?.logoUrl ?? null"
+          ></app-rotating-logo>
+        </div>
+
+        <div class="header-actions" slot="end">
+          <a
+            class="shift-status-link"
+            routerLink="/app/business-management/shifts"
+            [attr.aria-label]="
+              ('app.businessManagement.overview.shift.title' | transloco) +
+              ': ' +
+              ('app.businessManagement.overview.shift.unavailable' | transloco)
+            "
+          >
+            <ion-chip class="shift-status-chip" outline>
+              <ion-icon [icon]="shiftIcon" aria-hidden="true"></ion-icon>
+              <span>{{ 'app.businessManagement.overview.shift.title' | transloco }}</span>
+              <span class="shift-status-unavailable">
+                {{ 'app.businessManagement.overview.shift.unavailable' | transloco }}
+              </span>
+            </ion-chip>
+          </a>
+          <ion-button
+            [id]="notificationsTriggerId"
+            class="notifications-trigger"
+            fill="clear"
+            [attr.aria-label]="'app.businessManagement.overview.alerts.title' | transloco"
+          >
+            <ion-icon slot="icon-only" [icon]="notificationsIcon" aria-hidden="true"></ion-icon>
+          </ion-button>
+          <app-profile-menu
+            [isSigningOut]="isSigningOut()"
+            (signOutRequested)="signOut()"
+          ></app-profile-menu>
+        </div>
+        <ion-alert
+          [trigger]="notificationsTriggerId"
+          [header]="'app.businessManagement.overview.alerts.title' | transloco"
+          [message]="'app.businessManagement.overview.alerts.unavailable' | transloco"
+          [buttons]="[{ text: ('app.businessManagement.overview.alerts.dismiss' | transloco), role: 'cancel' }]"
+        ></ion-alert>
+      </ion-toolbar>
+      @if (shopLoadFailed()) {
+        <ion-toolbar color="danger" role="alert">
+          <ion-title>{{ 'app.shopLoadError' | transloco }}</ion-title>
+          <ion-button slot="end" fill="clear" (click)="loadShopDetails()">
+            {{ 'auth.setup.retry' | transloco }}
+          </ion-button>
+        </ion-toolbar>
+      } @else if (signOutFailed()) {
+        <ion-toolbar color="danger" role="alert">
+          <ion-title>{{ 'app.signOutError' | transloco }}</ion-title>
+        </ion-toolbar>
+      }
+      @if (subpageTabs().length > 0) {
+        <ion-toolbar class="subpage-toolbar">
+          <nav class="subpage-tabs" [attr.aria-label]="subpageNavigationLabel() | transloco">
+            @for (tab of subpageTabs(); track tab.route) {
+              <a
+                class="subpage-tab"
+                [routerLink]="tab.route"
+                routerLinkActive="subpage-tab-active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                ariaCurrentWhenActive="page"
+              >
+                {{ tab.label | transloco }}
+              </a>
+            }
+          </nav>
+        </ion-toolbar>
+      }
+    </ion-header>
+    <ion-router-outlet class="shell-outlet"></ion-router-outlet>
+  </div>

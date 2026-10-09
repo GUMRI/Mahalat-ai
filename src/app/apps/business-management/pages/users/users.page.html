@@ -1,0 +1,115 @@
+<ion-content class="users-content" [fullscreen]="true">
+  <main class="users-main">
+    <header class="page-heading">
+      <div>
+        <h1>{{ 'app.businessManagement.pages.users.title' | transloco }}</h1>
+        <p>{{ 'app.businessManagement.pages.users.description' | transloco }}</p>
+      </div>
+      <div class="heading-actions">
+        @if (canInvite()) {
+          <ion-button [disabled]="isCreatingInvitation()" (click)="createInvitation()">
+            {{ (isCreatingInvitation()
+              ? 'app.businessManagement.pages.users.creatingInvite'
+              : 'app.businessManagement.pages.users.createInvite') | transloco }}
+          </ion-button>
+        }
+        <ion-badge [color]="syncError() || loadError() ? 'warning' : 'success'">
+          {{ (syncError() || loadError()
+            ? 'app.businessManagement.pages.users.syncIssue'
+            : 'app.businessManagement.pages.users.synced') | transloco }}
+        </ion-badge>
+      </div>
+    </header>
+
+    @if (invitationError(); as inviteError) {
+      <p class="invitation-error" role="alert">{{ inviteError | transloco }}</p>
+    }
+    @if (invitationUrl(); as inviteUrl) {
+      <section class="invitation-panel" aria-live="polite">
+        @if (invitationQrCode(); as qrCode) {
+          <img [src]="qrCode" [alt]="'app.businessManagement.pages.users.inviteQrAlt' | transloco" />
+        }
+        <div>
+          <h2>{{ 'app.businessManagement.pages.users.inviteReady' | transloco }}</h2>
+          <p>{{ 'app.businessManagement.pages.users.inviteDetails' | transloco }}</p>
+          <p class="invitation-url" dir="ltr">{{ inviteUrl }}</p>
+          <ion-button fill="outline" (click)="copyInvitation()">
+            {{ 'app.businessManagement.pages.users.copyInvite' | transloco }}
+          </ion-button>
+          <ion-button fill="clear" (click)="dismissInvitation()">
+            {{ 'app.businessManagement.pages.users.dismissInvite' | transloco }}
+          </ion-button>
+        </div>
+      </section>
+    }
+
+    <ion-searchbar
+      class="users-search"
+      [value]="search()"
+      [placeholder]="'app.businessManagement.pages.users.search' | transloco"
+      [attr.aria-label]="'app.businessManagement.pages.users.search' | transloco"
+      (ionInput)="onSearch($event.detail.value)"
+    ></ion-searchbar>
+
+    @if (isLoading()) {
+      <div class="users-state" role="status" aria-live="polite">
+        <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
+        <p>{{ 'app.businessManagement.pages.users.loading' | transloco }}</p>
+      </div>
+    } @else if (loadError()) {
+      <div class="users-state" role="alert">
+        <p>{{ 'app.businessManagement.pages.users.loadError' | transloco }}</p>
+        <button class="retry-button" type="button" (click)="retry()">
+          {{ 'app.businessManagement.pages.users.retry' | transloco }}
+        </button>
+      </div>
+    } @else if (usersQuery.isError()) {
+      <div class="users-state" role="alert">
+        <p>{{ 'app.businessManagement.pages.users.queryError' | transloco }}</p>
+        <button class="retry-button" type="button" (click)="retry()">
+          {{ 'app.businessManagement.pages.users.retry' | transloco }}
+        </button>
+      </div>
+    } @else if (usersQuery.isLoading()) {
+      <div class="users-state" role="status" aria-live="polite">
+        <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
+        <p>{{ 'app.businessManagement.pages.users.loading' | transloco }}</p>
+      </div>
+    } @else if (table.getRowModel().rows.length === 0) {
+      <div class="users-state" role="status" aria-live="polite">
+        <ion-icon [icon]="peopleIcon" aria-hidden="true"></ion-icon>
+        <p>
+          {{ (search()
+            ? 'app.businessManagement.pages.users.noMatches'
+            : 'app.businessManagement.pages.users.empty') | transloco }}
+        </p>
+      </div>
+    } @else {
+      <div class="users-table-scroll" role="region" tabindex="0"
+        [attr.aria-label]="'app.businessManagement.pages.users.tableLabel' | transloco">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'app.businessManagement.pages.users.columns.email' | transloco }}</th>
+              <th scope="col">{{ 'app.businessManagement.pages.users.columns.role' | transloco }}</th>
+              <th scope="col">{{ 'app.businessManagement.pages.users.columns.branch' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of table.getRowModel().rows; track row.id) {
+              <tr>
+                <td>{{ row.getValue('email') }}</td>
+                <td>
+                  <ion-badge color="light">
+                    {{ roleTranslationKey(row.getValue('role')) | transloco }}
+                  </ion-badge>
+                </td>
+                <td>{{ branchLabel(row.getValue('branchId')) | transloco }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </main>
+</ion-content>

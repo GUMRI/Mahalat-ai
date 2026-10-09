@@ -44,16 +44,63 @@
             </ion-button>
           </ion-card-content>
         </ion-card>
-      } @else if (screen() === 'accessRequired') {
+      } @else if (screen() === 'chooseShop') {
         <ion-card class="auth-card">
           <ion-card-header>
             <ion-card-subtitle>{{ 'auth.signedIn.eyebrow' | transloco }}</ion-card-subtitle>
-            <ion-card-title>{{ 'auth.access.title' | transloco }}</ion-card-title>
+            <ion-card-title>{{ 'auth.chooseShop.title' | transloco }}</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <p class="intro">{{ 'auth.access.description' | transloco }}</p>
-            <ion-button class="primary-button" expand="block" [disabled]="isSubmitting()" (click)="signOut()">
+            <p class="intro">{{ 'auth.chooseShop.description' | transloco }}</p>
+            <ion-button class="primary-button" expand="block" [disabled]="isSubmitting()" (click)="chooseShopInvitation()">
+              {{ 'auth.chooseShop.join' | transloco }}
+            </ion-button>
+            <ion-button class="google-button" expand="block" fill="outline" [disabled]="isSubmitting()" (click)="chooseShopCreation()">
+              {{ 'auth.chooseShop.create' | transloco }}
+            </ion-button>
+            <ion-button class="text-button" expand="block" fill="clear" [disabled]="isSubmitting()" (click)="signOut()">
               {{ 'auth.signedIn.signOut' | transloco }}
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      } @else if (screen() === 'joinShop') {
+        <ion-card class="auth-card">
+          <ion-card-header>
+            <ion-card-subtitle>{{ 'auth.chooseShop.eyebrow' | transloco }}</ion-card-subtitle>
+            <ion-card-title>{{ 'auth.join.title' | transloco }}</ion-card-title>
+            <p class="intro">{{ 'auth.join.description' | transloco }}</p>
+          </ion-card-header>
+          <ion-card-content>
+            <app-shop-invitation-scanner (scanned)="onInvitationScanned($event)" />
+            <div class="divider"><span>{{ 'auth.join.orPaste' | transloco }}</span></div>
+            <ion-input
+              id="shopInvitation"
+              name="shopInvitation"
+              type="url"
+              fill="outline"
+              labelPlacement="stacked"
+              [label]="'auth.join.invitationLabel' | transloco"
+              [placeholder]="'auth.join.invitationPlaceholder' | transloco"
+              [value]="invitationUrl()"
+              (ionInput)="invitationUrl.set($event.detail.value ?? '')"
+            />
+            @if (errorKey(); as key) {
+              <ion-text class="error-message" role="alert">{{ key | transloco }}</ion-text>
+            }
+            <ion-button
+              class="primary-button"
+              expand="block"
+              [disabled]="isSubmitting() || !invitationUrl().trim()"
+              (click)="joinShop()"
+            >
+              @if (isSubmitting()) {
+                {{ 'auth.working' | transloco }}
+              } @else {
+                {{ 'auth.join.confirm' | transloco }}
+              }
+            </ion-button>
+            <ion-button class="text-button" expand="block" fill="clear" [disabled]="isSubmitting()" (click)="backToShopChoices()">
+              {{ 'auth.chooseShop.back' | transloco }}
             </ion-button>
           </ion-card-content>
         </ion-card>

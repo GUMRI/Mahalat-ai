@@ -1,0 +1,32 @@
+<video
+  #preview
+  class="scanner-preview"
+  [class.scanner-preview-active]="scanning()"
+  autoplay
+  muted
+  playsinline
+  [attr.aria-label]="'auth.join.scannerPreview' | transloco"
+></video>
+
+@if (scanError()) {
+  <p class="scanner-error" role="alert">
+    {{ 'auth.join.scannerError' | transloco }}
+  </p>
+}
+
+@if (scanning()) {
+  <ion-button expand="block" fill="outline" type="button" (click)="stopScanning()">
+    {{ 'auth.join.stopScanner' | transloco }}
+  </ion-button>
+} @else {
+  <ion-button expand="block" fill="outline" type="button" (click)="startScanning()">
+    {{ 'auth.join.scanQr' | transloco }}
+  </ion-button>
+}
+
+@if (scanning()) {
+  <div class="scanner-status" role="status" aria-live="polite">
+    <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
+    <span>{{ 'auth.join.scannerActive' | transloco }}</span>
+  </div>
+}

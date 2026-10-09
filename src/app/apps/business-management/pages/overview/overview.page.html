@@ -1,112 +1,115 @@
 <app-business-management-section-page page="overview">
-  <div overview-content class="overview-dashboard">
-    <section class="welcome-panel" aria-labelledby="overview-welcome-title">
+  <div overview-content class="overview-layout">
+    <div class="overview-main">
+      <section class="status-grid" [attr.aria-label]="'app.businessManagement.overview.statusLabel' | transloco">
+        <article class="status-card">
+          <div class="status-card-heading">
+            <span class="status-icon"><ion-icon [icon]="icons.cash" aria-hidden="true"></ion-icon></span>
+            <h2>{{ 'app.businessManagement.overview.shift.title' | transloco }}</h2>
+          </div>
+          <p>{{ 'app.businessManagement.overview.shift.unavailable' | transloco }}</p>
+          <ion-button fill="outline" size="small" routerLink="/app/business-management/shifts">
+            {{ 'app.businessManagement.overview.shift.open' | transloco }}
+          </ion-button>
+        </article>
+
+        <article class="status-card">
+          <div class="status-card-heading">
+            <span class="status-icon"><ion-icon [icon]="icons.document" aria-hidden="true"></ion-icon></span>
+            <h2>{{ 'app.businessManagement.overview.alerts.title' | transloco }}</h2>
+          </div>
+          <p>{{ 'app.businessManagement.overview.alerts.unavailable' | transloco }}</p>
+          <ion-button fill="outline" size="small" routerLink="/app/business-management/inventory">
+            {{ 'app.businessManagement.navigation.inventory' | transloco }}
+          </ion-button>
+        </article>
+      </section>
+
+      <section class="overview-section metrics-section" aria-labelledby="metrics-title">
+        <div class="section-heading metrics-heading">
+          <div>
+            <h2 id="metrics-title">{{ 'app.businessManagement.overview.metrics.title' | transloco }}</h2>
+          </div>
+          <div class="period-switch" role="group" [attr.aria-label]="'app.businessManagement.overview.period.label' | transloco">
+            @for (period of periods; track period) {
+              <button
+                type="button"
+                [class.period-selected]="selectedPeriod() === period"
+                [attr.aria-pressed]="selectedPeriod() === period"
+                (click)="setPeriod(period)"
+              >
+                {{ ('app.businessManagement.overview.period.' + period) | transloco }}
+              </button>
+            }
+          </div>
+        </div>
+        <div class="metrics-grid">
+          @for (metric of metrics; track metric.key) {
+            <ion-card class="metric-card">
+              <a
+                class="metric-card-link"
+                [routerLink]="metric.route"
+                [queryParams]="{ period: selectedPeriod() }"
+                [attr.aria-label]="metric.title | transloco"
+              >
+                <ion-card-content>
+                  <div class="metric-topline">
+                    <span class="metric-icon"><ion-icon [icon]="metric.icon" aria-hidden="true"></ion-icon></span>
+                    @if (metric.key === 'profit') {
+                      <span class="approximate-badge">{{ 'app.businessManagement.overview.metrics.approximate' | transloco }}</span>
+                    }
+                  </div>
+                  <span class="metric-title">{{ metric.title | transloco }}</span>
+                  <strong
+                    class="metric-value"
+                    [attr.aria-label]="'app.businessManagement.overview.metrics.unavailable' | transloco"
+                    [attr.title]="metric.hint | transloco"
+                  >—</strong>
+                  <span class="metric-hint">{{ metric.hint | transloco }}</span>
+                  <span class="metric-trend">{{ metric.trend | transloco }}</span>
+                </ion-card-content>
+              </a>
+            </ion-card>
+          }
+        </div>
+      </section>
+
+      <section class="overview-section" aria-labelledby="quick-actions-title">
+        <div class="section-heading">
+          <h2 id="quick-actions-title">{{ 'app.businessManagement.overview.quickActions' | transloco }}</h2>
+        </div>
+        <div class="quick-actions">
+          <a class="quick-action" routerLink="/app/pos">
+            <ion-icon [icon]="icons.bag" aria-hidden="true"></ion-icon>
+            <span>{{ 'app.businessManagement.overview.newSale' | transloco }}</span>
+          </a>
+          <a class="quick-action" routerLink="/app/business-management/invoices" [queryParams]="{ type: 'purchase' }">
+            <ion-icon [icon]="icons.document" aria-hidden="true"></ion-icon>
+            <span>{{ 'app.businessManagement.overview.newPurchase' | transloco }}</span>
+          </a>
+          <a class="quick-action" routerLink="/app/business-management/vouchers" [queryParams]="{ type: 'expense' }">
+            <ion-icon [icon]="icons.cash" aria-hidden="true"></ion-icon>
+            <span>{{ 'app.businessManagement.overview.newExpense' | transloco }}</span>
+          </a>
+          <a class="quick-action" routerLink="/app/business-management/vouchers" [queryParams]="{ type: 'receipt' }">
+            <ion-icon [icon]="icons.wallet" aria-hidden="true"></ion-icon>
+            <span>{{ 'app.businessManagement.overview.collectOrPay' | transloco }}</span>
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <aside class="overview-toolbar" aria-labelledby="overview-welcome-title">
       <div class="welcome-copy">
         <p class="eyebrow">{{ 'app.businessManagement.overview.eyebrow' | transloco }}</p>
-        <h2 id="overview-welcome-title">{{ 'app.businessManagement.overview.title' | transloco }}</h2>
+        <h1 id="overview-welcome-title">{{ 'app.businessManagement.overview.title' | transloco }}</h1>
         <p>{{ 'app.businessManagement.overview.description' | transloco }}</p>
       </div>
+      <p class="task-kicker">{{ 'app.businessManagement.overview.taskOfDay' | transloco }}</p>
       <ion-button class="primary-action" routerLink="/app/pos">
         <ion-icon slot="start" [icon]="icons.bag" aria-hidden="true"></ion-icon>
         {{ 'app.businessManagement.overview.openPos' | transloco }}
       </ion-button>
-    </section>
-
-    <section class="status-grid" [attr.aria-label]="'app.businessManagement.overview.statusLabel' | transloco">
-      <article class="status-card">
-        <div class="status-card-heading">
-          <span class="status-icon"><ion-icon [icon]="icons.cash" aria-hidden="true"></ion-icon></span>
-          <h2>{{ 'app.businessManagement.overview.shift.title' | transloco }}</h2>
-        </div>
-        <p>{{ 'app.businessManagement.overview.shift.unavailable' | transloco }}</p>
-        <ion-button fill="outline" size="small" routerLink="/app/business-management/shifts">
-          {{ 'app.businessManagement.overview.shift.open' | transloco }}
-        </ion-button>
-      </article>
-
-      <article class="status-card">
-        <div class="status-card-heading">
-          <span class="status-icon"><ion-icon [icon]="icons.document" aria-hidden="true"></ion-icon></span>
-          <h2>{{ 'app.businessManagement.overview.alerts.title' | transloco }}</h2>
-        </div>
-        <p>{{ 'app.businessManagement.overview.alerts.unavailable' | transloco }}</p>
-        <ion-button fill="outline" size="small" routerLink="/app/business-management/inventory">
-          {{ 'app.businessManagement.navigation.inventory' | transloco }}
-        </ion-button>
-      </article>
-    </section>
-
-    <section class="overview-section metrics-section" aria-labelledby="metrics-title">
-      <div class="section-heading metrics-heading">
-        <div>
-          <h2 id="metrics-title">{{ 'app.businessManagement.overview.metrics.title' | transloco }}</h2>
-        </div>
-        <div class="period-switch" role="group" [attr.aria-label]="'app.businessManagement.overview.period.label' | transloco">
-          @for (period of periods; track period) {
-            <button
-              type="button"
-              [class.period-selected]="selectedPeriod() === period"
-              [attr.aria-pressed]="selectedPeriod() === period"
-              (click)="setPeriod(period)"
-            >
-              {{ ('app.businessManagement.overview.period.' + period) | transloco }}
-            </button>
-          }
-        </div>
-      </div>
-      <div class="metrics-grid">
-        @for (metric of metrics; track metric.key) {
-          <ion-card class="metric-card">
-            <a
-              class="metric-card-link"
-              [routerLink]="metric.route"
-              [queryParams]="{ period: selectedPeriod() }"
-              [attr.aria-label]="metric.title | transloco"
-            >
-              <ion-card-content>
-                <div class="metric-topline">
-                  <span class="metric-icon"><ion-icon [icon]="metric.icon" aria-hidden="true"></ion-icon></span>
-                  @if (metric.key === 'profit') {
-                    <span class="approximate-badge">{{ 'app.businessManagement.overview.metrics.approximate' | transloco }}</span>
-                  }
-                </div>
-                <span class="metric-title">{{ metric.title | transloco }}</span>
-                <strong
-                  class="metric-value"
-                  [attr.aria-label]="'app.businessManagement.overview.metrics.unavailable' | transloco"
-                  [attr.title]="metric.hint | transloco"
-                >—</strong>
-                <span class="metric-hint">{{ metric.hint | transloco }}</span>
-                <span class="metric-trend">{{ metric.trend | transloco }}</span>
-              </ion-card-content>
-            </a>
-          </ion-card>
-        }
-      </div>
-    </section>
-
-    <section class="overview-section" aria-labelledby="quick-actions-title">
-      <div class="section-heading">
-        <h2 id="quick-actions-title">{{ 'app.businessManagement.overview.quickActions' | transloco }}</h2>
-      </div>
-      <div class="quick-actions">
-        <a class="quick-action" routerLink="/app/pos">
-          <ion-icon [icon]="icons.bag" aria-hidden="true"></ion-icon>
-          <span>{{ 'app.businessManagement.overview.newSale' | transloco }}</span>
-        </a>
-        <a class="quick-action" routerLink="/app/business-management/invoices" [queryParams]="{ type: 'purchase' }">
-          <ion-icon [icon]="icons.document" aria-hidden="true"></ion-icon>
-          <span>{{ 'app.businessManagement.overview.newPurchase' | transloco }}</span>
-        </a>
-        <a class="quick-action" routerLink="/app/business-management/vouchers" [queryParams]="{ type: 'expense' }">
-          <ion-icon [icon]="icons.cash" aria-hidden="true"></ion-icon>
-          <span>{{ 'app.businessManagement.overview.newExpense' | transloco }}</span>
-        </a>
-        <a class="quick-action" routerLink="/app/business-management/vouchers" [queryParams]="{ type: 'receipt' }">
-          <ion-icon [icon]="icons.wallet" aria-hidden="true"></ion-icon>
-          <span>{{ 'app.businessManagement.overview.collectOrPay' | transloco }}</span>
-        </a>
-      </div>
-    </section>
+    </aside>
   </div>
 </app-business-management-section-page>

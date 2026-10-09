@@ -1,7 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { FirebaseError } from 'firebase/app';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
-import { doc, getDoc, runTransaction, serverTimestamp } from 'firebase/firestore';
+import {
+  Timestamp,
+  doc,
+  getDoc,
+  runTransaction,
+  serverTimestamp,
+} from 'firebase/firestore';
 import { FIREBASE_APP, FIRESTORE } from '../../firebase/firebase.providers';
 import {
   CHART_OF_ACCOUNTS_TEMPLATE,
@@ -24,7 +30,7 @@ export interface ShopRegistration {
   };
 }
 
-export type ShopAccessState = 'ready' | 'setup' | 'linkedAccount';
+export type ShopAccessState = 'ready' | 'chooseShop';
 
 export interface ShopDetails {
   name: string;
@@ -33,6 +39,8 @@ export interface ShopDetails {
   currency: string;
   logoUrl: string | null;
 }
+
+export type ShopMemberRole = 'owner' | 'manager' | 'cashier' | 'accountant';
 
 const COUNTRY_CURRENCIES: Record<CountryCode, string> = {
   TN: 'TND',
@@ -68,16 +76,90 @@ export class ShopRegistrationService {
   }
 
   async getAccessState(userId: string): Promise<ShopAccessState> {
-    const [shop, profile] = await Promise.all([
-      getDoc(doc(this.firestore, 'shops', userId)),
-      getDoc(doc(this.firestore, 'users', userId)),
+    return (await this.getCurrentShopId(userId)) ? 'ready' : 'chooseShop';
+  }
+
+  async getCurrentShopId(userId: string): Promise<string | null> {
+    const profile = await getDoc(doc(this.firestore, 'users', userId));
+    const profileShopId = profile.data()?.['shopId'];
+    const shopId =
+      typeof profileShopId === 'string' && profileShopId ? profileShopId : userId;
+    const [shop, membership] = await Promise.all([
+      getDoc(doc(this.firestore, 'shops', shopId)),
+      getDoc(doc(this.firestore, 'shops', shopId, 'members', userId)),
     ]);
-    if (shop.exists()) return 'ready';
-    return profile.exists() ? 'linkedAccount' : 'setup';
+    return shop.exists() && membership.exists() ? shopId : null;
+  }
+
+  async getCurrentShopRole(userId: string): Promise<ShopMemberRole | null> {
+    const shopId = await this.getCurrentShopId(userId);
+    if (!shopId) return null;
+    const membership = await getDoc(
+      doc(this.firestore, 'shops', shopId, 'members', userId),
+    );
+    const role = membership.data()?.['role'];
+    return isShopMemberRole(role) ? role : null;
+  }
+
+  async createUserInvitation(userId: string): Promise<string> {
+    const shopId = await this.getCurrentShopId(userId);
+    if (!shopId) {
+      throw new FirebaseError(
+        'shop/invite-not-authorized',
+        'A shop membership is required to create an invitation.',
+      );
+    }
+
+    const invitationId = crypto.randomUUID().replaceAll('-', '');
+    const shopRef = doc(this.firestore, 'shops', shopId);
+    const memberRef = doc(this.firestore, 'shops', shopId, 'members', userId);
+    const inviteRef = doc(
+      this.firestore,
+      'shops',
+      shopId,
+      'invitations',
+      invitationId,
+    );
+    await runTransaction(this.firestore, async (transaction) => {
+      const [shop, member, invite] = await Promise.all([
+        transaction.get(shopRef),
+        transaction.get(memberRef),
+        transaction.get(inviteRef),
+      ]);
+      const role = member.data()?.['role'];
+      const branchId = member.data()?.['branchId'];
+      if (
+        !shop.exists() ||
+        !member.exists() ||
+        (role !== 'owner' && role !== 'manager') ||
+        typeof branchId !== 'string' ||
+        invite.exists()
+      ) {
+        throw new FirebaseError(
+          'shop/invite-not-authorized',
+          'Only a shop owner or manager can create a valid shop invitation.',
+        );
+      }
+
+      transaction.set(inviteRef, {
+        branchId,
+        role: 'cashier',
+        status: 'pending',
+        issuedBy: userId,
+        issuedAt: serverTimestamp(),
+        expiresAt: Timestamp.fromMillis(Date.now() + 24 * 60 * 60 * 1000),
+      });
+    });
+
+    const invitationUrl = new URL('/', window.location.origin);
+    invitationUrl.searchParams.set('shopId', shopId);
+    invitationUrl.searchParams.set('invitationId', invitationId);
+    return invitationUrl.toString();
   }
 
   async getShopDetails(userId: string): Promise<ShopDetails | null> {
-    const snapshot = await getDoc(doc(this.firestore, 'shops', userId));
+    const shopId = (await this.getCurrentShopId(userId)) ?? userId;
+    const snapshot = await getDoc(doc(this.firestore, 'shops', shopId));
     if (!snapshot.exists()) return null;
     const data = snapshot.data();
     if (
@@ -100,6 +182,122 @@ export class ShopRegistrationService {
       currency: data['currency'],
       logoUrl: typeof data['logoUrl'] === 'string' ? data['logoUrl'] : null,
     };
+  }
+
+  async joinWithInvitation(
+    userId: string,
+    email: string,
+    invitationUrl: string,
+  ): Promise<string> {
+    const invitation = parseShopInvitation(invitationUrl);
+    const shopRef = doc(this.firestore, 'shops', invitation.shopId);
+    const inviteRef = doc(
+      this.firestore,
+      'shops',
+      invitation.shopId,
+      'invitations',
+      invitation.invitationId,
+    );
+    const memberRef = doc(
+      this.firestore,
+      'shops',
+      invitation.shopId,
+      'members',
+      userId,
+    );
+    const userRef = doc(this.firestore, 'users', userId);
+
+    await runTransaction(this.firestore, async (transaction) => {
+      const [shop, invite, member, userProfile] = await Promise.all([
+        transaction.get(shopRef),
+        transaction.get(inviteRef),
+        transaction.get(memberRef),
+        transaction.get(userRef),
+      ]);
+      if (!shop.exists() || !invite.exists()) {
+        throw new FirebaseError(
+          'shop/invalid-invitation',
+          'The shop invitation is invalid or no longer available.',
+        );
+      }
+      if (member.exists()) {
+        throw new FirebaseError(
+          'shop/already-member',
+          'This account is already a member of the shop.',
+        );
+      }
+      const currentShopId = userProfile.data()?.['shopId'];
+      if (typeof currentShopId === 'string' && currentShopId !== invitation.shopId) {
+        throw new FirebaseError(
+          'shop/already-linked',
+          'This account is already linked to another shop.',
+        );
+      }
+
+      const inviteData = invite.data();
+      const branchId = inviteData['branchId'];
+      const role = inviteData['role'];
+      const expiresAt = inviteData['expiresAt'];
+      if (
+        inviteData['status'] !== 'pending' ||
+        !(expiresAt instanceof Timestamp) ||
+        expiresAt.toMillis() <= Date.now() ||
+        typeof branchId !== 'string' ||
+        !isInvitedRole(role)
+      ) {
+        throw new FirebaseError(
+          'shop/invalid-invitation',
+          'The shop invitation is invalid, expired, or already used.',
+        );
+      }
+      const invitedEmail = inviteData['email'];
+      if (
+        typeof invitedEmail === 'string' &&
+        invitedEmail.toLowerCase() !== email.toLowerCase()
+      ) {
+        throw new FirebaseError(
+          'shop/invitation-email-mismatch',
+          'This invitation was issued to a different email address.',
+        );
+      }
+
+      const branchRef = doc(
+        this.firestore,
+        'shops',
+        invitation.shopId,
+        'branches',
+        branchId,
+      );
+      const branch = await transaction.get(branchRef);
+      if (!branch.exists()) {
+        throw new FirebaseError(
+          'shop/invalid-invitation',
+          'The invitation refers to a branch that does not exist.',
+        );
+      }
+
+      const createdAt = serverTimestamp();
+      transaction.update(inviteRef, {
+        status: 'accepted',
+        acceptedBy: userId,
+        acceptedAt: serverTimestamp(),
+      });
+      transaction.set(memberRef, {
+        uid: userId,
+        email,
+        branchId,
+        role,
+        _deleted: false,
+        serverTimestamp: serverTimestamp(),
+        createdAt,
+      });
+      transaction.set(
+        userRef,
+        { uid: userId, email, shopId: invitation.shopId, branchId, role, createdAt },
+        { merge: true },
+      );
+    });
+    return invitation.shopId;
   }
 
   async register(
@@ -164,6 +362,8 @@ export class ShopRegistrationService {
         email,
         branchId: 'main',
         role: 'owner',
+        _deleted: false,
+        serverTimestamp: serverTimestamp(),
         createdAt,
       });
       transaction.set(branchRef, {
@@ -191,4 +391,47 @@ export class ShopRegistrationService {
   currencyFor(countryCode: CountryCode): string {
     return COUNTRY_CURRENCIES[countryCode];
   }
+}
+
+interface ShopInvitationReference {
+  readonly shopId: string;
+  readonly invitationId: string;
+}
+
+function parseShopInvitation(value: string): ShopInvitationReference {
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    throw new FirebaseError(
+      'shop/invalid-invitation',
+      'The QR code does not contain a valid shop invitation.',
+    );
+  }
+  const shopId = url.searchParams.get('shopId');
+  const invitationId = url.searchParams.get('invitationId');
+  if (
+    url.origin !== window.location.origin ||
+    url.pathname !== '/' ||
+    !shopId ||
+    !invitationId ||
+    shopId.length > 128 ||
+    invitationId.length > 256 ||
+    shopId.includes('/') ||
+    invitationId.includes('/')
+  ) {
+    throw new FirebaseError(
+      'shop/invalid-invitation',
+      'The QR code does not contain a valid shop invitation.',
+    );
+  }
+  return { shopId, invitationId };
+}
+
+function isInvitedRole(value: unknown): value is 'manager' | 'cashier' | 'accountant' {
+  return value === 'manager' || value === 'cashier' || value === 'accountant';
+}
+
+function isShopMemberRole(value: unknown): value is ShopMemberRole {
+  return value === 'owner' || value === 'manager' || isInvitedRole(value);
 }

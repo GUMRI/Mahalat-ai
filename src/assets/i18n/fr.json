@@ -45,9 +45,32 @@
       "title": "Bienvenue chez Mahalat",
       "signOut": "Se déconnecter"
     },
-    "access": {
-      "title": "Accès à une boutique requis",
-      "description": "Ce compte est déjà associé à une boutique. Demandez au propriétaire de vous accorder ou de rétablir votre accès."
+    "chooseShop": {
+      "eyebrow": "Choisissez comment commencer",
+      "title": "Choisir une boutique",
+      "description": "Rejoignez une boutique avec un QR d’invitation ou créez la vôtre.",
+      "join": "Rejoindre une boutique avec un QR",
+      "create": "Créer votre boutique",
+      "back": "Retour aux choix"
+    },
+    "join": {
+      "title": "Rejoindre une boutique",
+      "description": "Scannez le QR d’invitation à usage unique partagé par le propriétaire ou le responsable.",
+      "scanQr": "Scanner le QR d’invitation",
+      "stopScanner": "Arrêter le scan",
+      "scannerActive": "Pointez votre caméra vers le QR d’invitation.",
+      "scannerPreview": "Vue caméra pour scanner une invitation",
+      "scannerError": "Impossible d’accéder à la caméra. Autorisez l’accès ou collez le lien d’invitation ci-dessous.",
+      "orPaste": "ou coller un lien d’invitation",
+      "invitationLabel": "Lien d’invitation",
+      "invitationPlaceholder": "Collez le lien reçu de la boutique",
+      "confirm": "Rejoindre la boutique",
+      "errors": {
+        "invalidInvitation": "Cette invitation est invalide, expirée ou déjà utilisée.",
+        "emailMismatch": "Cette invitation a été envoyée à une autre adresse e-mail.",
+        "alreadyMember": "Ce compte est déjà associé à une boutique.",
+        "permissionDenied": "La boutique n’a pas autorisé cette invitation. Demandez au propriétaire de vérifier l’invitation ou vos accès."
+      }
     },
     "setup": {
       "eyebrow": "Quelques détails pour commencer",
@@ -161,6 +184,7 @@
   },
   "app": {
       "navigation": {
+        "menu": "Menu",
         "home": "Gestion commerce",
         "accounting": "Comptabilité",
         "workers": "Agents IA",
@@ -385,6 +409,7 @@
         "loadingShop": "Chargement des informations de la boutique…",
         "retry": "Réessayer",
         "navigation": {
+          "menu": "Navigation principale",
           "label": "Pages de gestion de l’activité",
           "overview": "Vue d’ensemble",
           "invoices": "Factures",
@@ -402,6 +427,7 @@
           "welcome": "L’activité de votre boutique en un coup d’œil",
           "description": "Consultez les ventes, la caisse, les dettes clients et fournisseurs et les dépenses de la période choisie.",
           "openPos": "Ouvrir la caisse",
+          "taskOfDay": "Votre prochaine étape",
           "quickActions": "Actions rapides",
           "quickActionsDescription": "Les tâches courantes sont accessibles en un geste.",
           "newSale": "Nouvelle vente",
@@ -455,7 +481,8 @@
           },
           "alerts": {
             "title": "Alertes",
-            "unavailable": "Les alertes seront disponibles après connexion du stock et des paiements."
+            "unavailable": "Les alertes seront disponibles après connexion du stock et des paiements.",
+            "dismiss": "Fermer"
           }
         },
         "pages": {
@@ -487,7 +514,39 @@
           "users": {
             "title": "Utilisateurs et accès",
             "description": "Gérez les personnes qui peuvent travailler dans cette boutique.",
-            "empty": "La gestion des utilisateurs n’est pas encore connectée à cette page."
+            "createInvite": "Inviter un utilisateur",
+            "creatingInvite": "Création de l’invitation…",
+            "inviteReady": "Invitation prête",
+            "inviteDetails": "Cette invitation de caissier expire dans 24 heures et ne peut être utilisée qu’une fois.",
+            "inviteQrAlt": "QR code d’invitation à usage unique",
+            "copyInvite": "Copier le lien d’invitation",
+            "dismissInvite": "Fermer",
+            "inviteError": "Impossible de créer l’invitation. Vérifiez vos accès puis réessayez.",
+            "copyError": "Impossible de copier le lien. Sélectionnez-le puis copiez-le ci-dessus.",
+            "empty": "Aucun utilisateur n’a encore accès à cette boutique.",
+            "noMatches": "Aucun utilisateur ne correspond à votre recherche.",
+            "search": "Rechercher par e-mail",
+            "loading": "Chargement des utilisateurs...",
+            "loadError": "Impossible de charger les utilisateurs. Vérifiez la connexion et les autorisations puis réessayez.",
+            "queryError": "Impossible d’afficher les utilisateurs. Veuillez réessayer.",
+            "retry": "Réessayer",
+            "synced": "Données locales prêtes",
+            "syncIssue": "Synchronisation à vérifier",
+            "tableLabel": "Utilisateurs de la boutique",
+            "columns": {
+              "email": "E-mail",
+              "role": "Accès",
+              "branch": "Branche"
+            },
+            "roles": {
+              "owner": "Propriétaire",
+              "manager": "Gestionnaire",
+              "cashier": "Caissier",
+              "accountant": "Comptable"
+            },
+            "branches": {
+              "main": "Branche principale"
+            }
           },
           "shifts": {
             "title": "Services et caisse",

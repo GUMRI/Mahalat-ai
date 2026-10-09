@@ -1,17 +1,25 @@
-.overview-dashboard {
+.overview-layout {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) 19rem;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.overview-main {
+  display: grid;
+  min-width: 0;
   gap: 1.5rem;
 }
 
-.welcome-panel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  border-radius: 1.2rem;
-  background: var(--ion-color-primary);
-  color: var(--ion-color-primary-contrast);
-  padding: clamp(1.25rem, 4vw, 2.25rem);
+.overview-toolbar {
+  display: grid;
+  gap: 0.8rem;
+  position: sticky;
+  top: 1rem;
+  border: 1px solid rgba(var(--ion-color-medium-rgb), 0.2);
+  border-radius: 1rem;
+  background: var(--ion-color-light-tint);
+  padding: 1.25rem;
 }
 
 .welcome-copy {
@@ -20,29 +28,36 @@
 
 .eyebrow {
   margin: 0 0 0.5rem;
-  color: rgba(var(--ion-color-primary-contrast-rgb), 0.82);
+  color: var(--ion-color-primary);
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-.welcome-copy h2 {
+.welcome-copy h1 {
   margin: 0;
-  font-size: clamp(1.45rem, 3vw, 2.15rem);
+  color: var(--ion-color-dark);
+  font-size: clamp(1.45rem, 3vw, 2rem);
   line-height: 1.2;
 }
 
 .welcome-copy > p:last-child {
   margin: 0.7rem 0 0;
-  color: rgba(var(--ion-color-primary-contrast-rgb), 0.86);
+  color: var(--ion-color-medium-shade);
   line-height: 1.55;
 }
 
+.task-kicker {
+  margin: 0.4rem 0 0;
+  color: var(--ion-color-medium-shade);
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+
 .primary-action {
-  flex: 0 0 auto;
-  --background: var(--ion-color-primary-contrast);
-  --color: var(--ion-color-primary);
+  width: 100%;
+  margin: 0;
   --border-radius: 0.8rem;
   font-weight: 700;
 }
@@ -262,6 +277,19 @@
 }
 
 @media (max-width: 760px) {
+  .overview-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .overview-toolbar {
+    position: static;
+    grid-row: 1;
+  }
+
+  .overview-main {
+    grid-row: 2;
+  }
+
   .quick-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -272,16 +300,6 @@
 }
 
 @media (max-width: 560px) {
-  .welcome-panel {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .primary-action {
-    width: 100%;
-    margin-inline: 0;
-  }
-
   .status-grid {
     grid-template-columns: 1fr;
   }

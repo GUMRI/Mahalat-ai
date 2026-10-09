@@ -45,9 +45,32 @@
       "title": "Welcome to Mahalat",
       "signOut": "Sign out"
     },
-    "access": {
-      "title": "Shop access is required",
-      "description": "This account is already linked to a shop. Ask the shop owner to grant or restore your access."
+    "chooseShop": {
+      "eyebrow": "Choose how to get started",
+      "title": "Choose a shop",
+      "description": "Join a shop with an invitation QR code, or create a new shop.",
+      "join": "Join an existing shop with QR",
+      "create": "Create your shop",
+      "back": "Back to choices"
+    },
+    "join": {
+      "title": "Join an existing shop",
+      "description": "Scan the one-time invitation QR code shared by the shop owner or manager.",
+      "scanQr": "Scan invitation QR code",
+      "stopScanner": "Stop scanning",
+      "scannerActive": "Point your camera at the invitation QR code.",
+      "scannerPreview": "Camera view for scanning a shop invitation",
+      "scannerError": "Could not access the camera. Allow camera access or paste the invitation link below.",
+      "orPaste": "or paste an invitation link",
+      "invitationLabel": "Invitation link",
+      "invitationPlaceholder": "Paste the link from the shop invitation",
+      "confirm": "Join shop",
+      "errors": {
+        "invalidInvitation": "This invitation is invalid, expired, or already used.",
+        "emailMismatch": "This invitation was issued to a different email address.",
+        "alreadyMember": "This account is already linked to a shop.",
+        "permissionDenied": "The shop did not authorize this invitation. Ask its owner to check the invite or your access."
+      }
     },
     "setup": {
       "eyebrow": "A few details to get started",
@@ -161,6 +184,7 @@
   },
   "app": {
       "navigation": {
+        "menu": "Menu",
         "home": "Business Management",
         "accounting": "Accounting",
         "workers": "AI Workers",
@@ -384,6 +408,7 @@
         "loadingShop": "Loading shop information…",
         "retry": "Try again",
         "navigation": {
+          "menu": "Main navigation",
           "label": "Business Management pages",
           "overview": "Overview",
           "invoices": "Invoices",
@@ -401,6 +426,7 @@
           "welcome": "Your shop’s activity at a glance",
           "description": "Review sales, cash, customer and supplier dues, and expenses for the selected period.",
           "openPos": "Open point of sale",
+          "taskOfDay": "Your next step",
           "quickActions": "Quick actions",
           "quickActionsDescription": "Common tasks are one tap away.",
           "newSale": "New sale",
@@ -454,7 +480,8 @@
           },
           "alerts": {
             "title": "Alerts",
-            "unavailable": "Shop alerts are not available until inventory and payment activity are connected."
+            "unavailable": "Shop alerts are not available until inventory and payment activity are connected.",
+            "dismiss": "Close"
           }
         },
         "pages": {
@@ -486,7 +513,39 @@
           "users": {
             "title": "Users & access",
             "description": "Manage the people who can work in this shop.",
-            "empty": "Shop user management is not connected to this page yet."
+            "createInvite": "Invite a user",
+            "creatingInvite": "Creating invitation…",
+            "inviteReady": "Invitation ready",
+            "inviteDetails": "This cashier invitation expires in 24 hours and can only be used once.",
+            "inviteQrAlt": "One-time shop invitation QR code",
+            "copyInvite": "Copy invitation link",
+            "dismissInvite": "Close",
+            "inviteError": "Could not create the invitation. Check your shop access and try again.",
+            "copyError": "Could not copy the link. Select and copy it above.",
+            "empty": "No users have access to this shop yet.",
+            "noMatches": "No users match your search.",
+            "search": "Search by email",
+            "loading": "Loading shop users...",
+            "loadError": "Could not load shop users. Check your connection and access, then retry.",
+            "queryError": "Could not display the users. Please try again.",
+            "retry": "Retry",
+            "synced": "Local data ready",
+            "syncIssue": "Sync needs attention",
+            "tableLabel": "Shop users",
+            "columns": {
+              "email": "Email",
+              "role": "Access",
+              "branch": "Branch"
+            },
+            "roles": {
+              "owner": "Owner",
+              "manager": "Manager",
+              "cashier": "Cashier",
+              "accountant": "Accountant"
+            },
+            "branches": {
+              "main": "Main branch"
+            }
           },
           "shifts": {
             "title": "Shifts & cash",

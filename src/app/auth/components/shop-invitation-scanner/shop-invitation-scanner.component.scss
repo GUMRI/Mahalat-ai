@@ -1,0 +1,5 @@
+:host{display:block}
+.scanner-preview{display:none;width:100%;max-height:20rem;aspect-ratio:4/3;object-fit:cover;border-radius:.75rem;background:#0f172a}
+.scanner-preview-active{display:block;margin-bottom:.75rem}
+.scanner-error{margin:.5rem 0;color:var(--ion-color-danger);font-size:.8rem}
+.scanner-status{display:flex;align-items:center;justify-content:center;gap:.6rem;margin-top:.75rem;color:var(--ion-color-medium);font-size:.8rem}
