@@ -8,21 +8,52 @@
   [attr.aria-label]="'auth.join.scannerPreview' | transloco"
 ></video>
 
-@if (scanError()) {
-  <p class="scanner-error" role="alert">
-    {{ 'auth.join.scannerError' | transloco }}
-  </p>
+@if (scanErrorKey(); as errorKey) {
+  <div class="scanner-error" role="alert">
+    <ion-icon [icon]="alertIcon" aria-hidden="true"></ion-icon>
+    <span>{{ errorKey | transloco }}</span>
+  </div>
 }
 
-@if (scanning()) {
-  <ion-button expand="block" fill="outline" type="button" (click)="stopScanning()">
-    {{ 'auth.join.stopScanner' | transloco }}
+<div class="scanner-actions">
+  @if (scanning()) {
+    <ion-button expand="block" fill="outline" color="danger" type="button" (click)="stopScanning()">
+      <ion-icon slot="start" [icon]="stopIcon" aria-hidden="true"></ion-icon>
+      {{ 'auth.join.stopScanner' | transloco }}
+    </ion-button>
+  } @else {
+    <ion-button expand="block" fill="outline" type="button" (click)="startScanning()" [disabled]="isProcessingFile()">
+      <ion-icon slot="start" [icon]="cameraIcon" aria-hidden="true"></ion-icon>
+      {{ 'auth.join.scanQr' | transloco }}
+    </ion-button>
+  }
+
+  <input
+    #fileInput
+    type="file"
+    accept="image/*"
+    class="file-input-hidden"
+    (change)="onFileSelected($event)"
+  />
+
+  <ion-button
+    expand="block"
+    fill="clear"
+    size="small"
+    type="button"
+    class="upload-button"
+    [disabled]="isProcessingFile() || scanning()"
+    (click)="triggerFileInput()"
+  >
+    @if (isProcessingFile()) {
+      <ion-spinner name="crescent" slot="start" aria-hidden="true"></ion-spinner>
+      {{ 'auth.join.readingImage' | transloco }}
+    } @else {
+      <ion-icon slot="start" [icon]="imageIcon" aria-hidden="true"></ion-icon>
+      {{ 'auth.join.uploadQrImage' | transloco }}
+    }
   </ion-button>
-} @else {
-  <ion-button expand="block" fill="outline" type="button" (click)="startScanning()">
-    {{ 'auth.join.scanQr' | transloco }}
-  </ion-button>
-}
+</div>
 
 @if (scanning()) {
   <div class="scanner-status" role="status" aria-live="polite">
@@ -30,3 +61,4 @@
     <span>{{ 'auth.join.scannerActive' | transloco }}</span>
   </div>
 }
+

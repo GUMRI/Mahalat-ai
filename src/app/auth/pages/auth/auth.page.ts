@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  IonAlert,
   IonButton,
   IonBadge,
   IonCard,
@@ -25,7 +26,7 @@ import {
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirebaseError } from 'firebase/app';
-import { logoGoogle } from 'ionicons/icons';
+import { flashOutline, logoGoogle } from 'ionicons/icons';
 import { FirebaseAuthService } from '../../../firebase/firebase-auth.service';
 import { AppLocale } from '../../../settings/i18n/i18n.config';
 import { LangService } from '../../../settings/i18n/i18n.service';
@@ -81,6 +82,7 @@ const EXTENSION_OPTIONS: ExtensionKey[] = [
   ],
   imports: [
     FormsModule,
+    IonAlert,
     IonButton,
     IonBadge,
     IonCard,
@@ -108,6 +110,7 @@ const EXTENSION_OPTIONS: ExtensionKey[] = [
 })
 export class AuthPage {
   readonly googleIcon = logoGoogle;
+  readonly demoIcon = flashOutline;
   readonly auth = inject(FirebaseAuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -120,6 +123,31 @@ export class AuthPage {
   readonly isSubmitting = signal(false);
   readonly errorKey = signal<string | null>(null);
   readonly invitationUrl = signal('');
+
+  // Automatic invitation detection alert
+  readonly isAutoInviteAlertOpen = signal(false);
+  readonly detectedInvite = signal<{
+    shopId: string;
+    invitationId: string;
+    shopName?: string;
+    role?: string;
+  } | null>(null);
+  readonly autoInviteAlertButtons = computed(() => [
+    {
+      text: this.lang.locale().startsWith('ar') ? 'لاحقاً' : (this.lang.locale().startsWith('fr') ? 'Plus tard' : 'Not Now'),
+      role: 'cancel',
+      handler: () => {
+        this.isAutoInviteAlertOpen.set(false);
+      },
+    },
+    {
+      text: this.lang.locale().startsWith('ar') ? 'قبول الدعوة' : (this.lang.locale().startsWith('fr') ? 'Accepter' : 'Accept'),
+      role: 'confirm',
+      handler: () => {
+        void this.acceptDetectedInvitation();
+      },
+    },
+  ]);
 
   readonly businessTypes = BUSINESS_TYPES;
   readonly countries = COUNTRIES;
@@ -286,6 +314,28 @@ export class AuthPage {
     await this.runAuthAction(() => this.auth.signInWithGoogle());
   }
 
+  async quickDemoLogin(): Promise<void> {
+    const demoEmail = 'demo@mahalat.ai';
+    const demoPassword = 'Password123!';
+    this.email.set(demoEmail);
+    this.password.set(demoPassword);
+    await this.runAuthAction(async () => {
+      try {
+        await this.auth.signIn(demoEmail, demoPassword);
+      } catch (error: unknown) {
+        if (
+          error instanceof FirebaseError &&
+          (error.code === 'auth/user-not-found' ||
+            error.code === 'auth/invalid-credential')
+        ) {
+          await this.auth.signUp(demoEmail, demoPassword);
+          return;
+        }
+        throw error;
+      }
+    });
+  }
+
   async submitShopSetup(): Promise<void> {
     const user = this.auth.user();
     if (!user) {
@@ -320,6 +370,30 @@ export class AuthPage {
     await this.runAuthAction(() => this.auth.signOut());
   }
 
+  async acceptDetectedInvitation(): Promise<void> {
+    const invite = this.detectedInvite();
+    const user = this.auth.user();
+    if (!invite || !user) {
+      this.isAutoInviteAlertOpen.set(false);
+      return;
+    }
+    this.isAutoInviteAlertOpen.set(false);
+    const invitationUrl = new URL('/', window.location.origin);
+    invitationUrl.searchParams.set('shopId', invite.shopId);
+    invitationUrl.searchParams.set('invitationId', invite.invitationId);
+    this.invitationUrl.set(invitationUrl.toString());
+
+    await this.runAuthAction(async () => {
+      await this.registration.joinWithInvitation(
+        user.uid,
+        user.email ?? '',
+        invitationUrl.toString(),
+      );
+      this.screen.set('ready');
+      await this.navigateToWorkspace();
+    });
+  }
+
   private async loadShopState(userId: string, request: number): Promise<void> {
     try {
       const accessState = await this.registration.getAccessState(userId);
@@ -331,11 +405,40 @@ export class AuthPage {
       }
       const shopId = this.route.snapshot.queryParamMap.get('shopId');
       const invitationId = this.route.snapshot.queryParamMap.get('invitationId');
+      const user = this.auth.user();
+
       if (shopId && invitationId) {
         this.invitationUrl.set(window.location.href);
         this.screen.set('joinShop');
+        // Fetch invite details and automatically prompt with alert
+        const peek = await this.registration.peekInvitationDetails(shopId, invitationId);
+        if (request !== this.shopCheckRequest) return;
+        this.detectedInvite.set({
+          shopId,
+          invitationId,
+          shopName: peek?.shopName,
+          role: peek?.role,
+        });
+        this.isAutoInviteAlertOpen.set(true);
       } else {
         this.screen.set('chooseShop');
+        // Automatically check if an invitation was sent to the user's email
+        if (user?.email) {
+          try {
+            const pending = await this.registration.findPendingInvitationForUser(user.email);
+            if (request !== this.shopCheckRequest) return;
+            if (pending) {
+              const url = new URL('/', window.location.origin);
+              url.searchParams.set('shopId', pending.shopId);
+              url.searchParams.set('invitationId', pending.invitationId);
+              this.invitationUrl.set(url.toString());
+              this.detectedInvite.set(pending);
+              this.isAutoInviteAlertOpen.set(true);
+            }
+          } catch {
+            // Silently ignore if lookup fails
+          }
+        }
       }
     } catch {
       if (request !== this.shopCheckRequest) return;
@@ -382,9 +485,14 @@ export class AuthPage {
       case 'auth/weak-password':
         return 'auth.errors.weakPassword';
       case 'auth/popup-closed-by-user':
+      case 'auth/cancelled-popup-request':
         return 'auth.errors.googleCancelled';
       case 'auth/popup-blocked':
         return 'auth.errors.popupBlocked';
+      case 'auth/unauthorized-domain':
+        return 'auth.errors.unauthorizedDomain';
+      case 'auth/operation-not-allowed':
+        return 'auth.errors.operationNotAllowed';
       case 'shop/invalid-invitation':
         return 'auth.join.errors.invalidInvitation';
       case 'shop/invitation-email-mismatch':

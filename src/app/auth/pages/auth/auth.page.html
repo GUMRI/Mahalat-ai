@@ -335,6 +335,11 @@
             {{ 'auth.form.google' | transloco }}
           </ion-button>
 
+          <ion-button class="demo-button" expand="block" fill="clear" size="small" [disabled]="isSubmitting()" (click)="quickDemoLogin()">
+            <ion-icon slot="start" [icon]="demoIcon" aria-hidden="true"></ion-icon>
+            {{ 'auth.form.demoSignIn' | transloco }}
+          </ion-button>
+
           <div class="divider"><span>{{ 'auth.form.orEmail' | transloco }}</span></div>
 
           <form (ngSubmit)="submitEmail()" #authForm="ngForm">
@@ -397,4 +402,17 @@
       }
     </section>
   </main>
+
+  <ion-alert
+    [isOpen]="isAutoInviteAlertOpen()"
+    [header]="'auth.join.autoAlert.header' | transloco"
+    [subHeader]="'auth.join.autoAlert.subHeader' | transloco"
+    [message]="
+      detectedInvite()?.shopName
+        ? ('auth.join.autoAlert.messageNamed' | transloco: { shopName: detectedInvite()?.shopName })
+        : ('auth.join.autoAlert.messageGeneric' | transloco)
+    "
+    [buttons]="autoInviteAlertButtons()"
+    (didDismiss)="isAutoInviteAlertOpen.set(false)"
+  ></ion-alert>
 </ion-content>

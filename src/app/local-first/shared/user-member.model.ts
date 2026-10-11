@@ -5,6 +5,8 @@ export type ShopUserRole = 'owner' | 'manager' | 'cashier' | 'accountant';
 export type ShopUser = Record<string, unknown> & {
   id: string;
   uid: string;
+  displayName?: string;
+  avatarUrl?: string;
   email: string;
   branchId: string;
   role: ShopUserRole;
@@ -39,6 +41,18 @@ function isShopUser(value: unknown): value is ShopUser {
     typeof user['email'] !== 'string' ||
     typeof user['branchId'] !== 'string' ||
     !isShopUserRole(user['role'])
+  ) {
+    return false;
+  }
+  if (
+    user['displayName'] !== undefined &&
+    typeof user['displayName'] !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    user['avatarUrl'] !== undefined &&
+    typeof user['avatarUrl'] !== 'string'
   ) {
     return false;
   }

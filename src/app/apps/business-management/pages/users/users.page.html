@@ -7,10 +7,9 @@
       </div>
       <div class="heading-actions">
         @if (canInvite()) {
-          <ion-button [disabled]="isCreatingInvitation()" (click)="createInvitation()">
-            {{ (isCreatingInvitation()
-              ? 'app.businessManagement.pages.users.creatingInvite'
-              : 'app.businessManagement.pages.users.createInvite') | transloco }}
+          <ion-button (click)="openInviteModal()">
+            <ion-icon slot="start" [icon]="personAddIcon" aria-hidden="true"></ion-icon>
+            {{ 'app.businessManagement.pages.users.createInvite' | transloco }}
           </ion-button>
         }
         <ion-badge [color]="syncError() || loadError() ? 'warning' : 'success'">
@@ -21,27 +20,236 @@
       </div>
     </header>
 
-    @if (invitationError(); as inviteError) {
-      <p class="invitation-error" role="alert">{{ inviteError | transloco }}</p>
-    }
-    @if (invitationUrl(); as inviteUrl) {
-      <section class="invitation-panel" aria-live="polite">
-        @if (invitationQrCode(); as qrCode) {
-          <img [src]="qrCode" [alt]="'app.businessManagement.pages.users.inviteQrAlt' | transloco" />
-        }
-        <div>
-          <h2>{{ 'app.businessManagement.pages.users.inviteReady' | transloco }}</h2>
-          <p>{{ 'app.businessManagement.pages.users.inviteDetails' | transloco }}</p>
-          <p class="invitation-url" dir="ltr">{{ inviteUrl }}</p>
-          <ion-button fill="outline" (click)="copyInvitation()">
-            {{ 'app.businessManagement.pages.users.copyInvite' | transloco }}
-          </ion-button>
-          <ion-button fill="clear" (click)="dismissInvitation()">
-            {{ 'app.businessManagement.pages.users.dismissInvite' | transloco }}
-          </ion-button>
-        </div>
-      </section>
-    }
+    <!-- User Invitation Modal -->
+    <ion-modal [isOpen]="isInviteModalOpen()" (didDismiss)="closeInviteModal()" class="invite-modal">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar color="primary">
+            <ion-title>{{ 'app.businessManagement.pages.users.inviteModalTitle' | transloco }}</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeInviteModal()" [attr.aria-label]="'app.businessManagement.pages.users.close' | transloco">
+                <ion-icon slot="icon-only" [icon]="closeIcon" aria-hidden="true"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+
+        <ion-content class="modal-content ion-padding">
+          <div class="modal-intro">
+            <p class="modal-subtitle">
+              {{ 'app.businessManagement.pages.users.inviteModalSubtitle' | transloco }}
+            </p>
+          </div>
+
+          <!-- Method Selector (QR vs Email) -->
+          <div class="method-selector-card">
+            <ion-segment
+              [value]="inviteMethod()"
+              (ionChange)="onInviteMethodChange($event)"
+              class="invite-method-segment"
+            >
+              <ion-segment-button value="qr" class="method-seg-button">
+                <ion-icon [icon]="qrIcon" aria-hidden="true"></ion-icon>
+                <ion-label>
+                  <span class="seg-title">{{ 'app.businessManagement.pages.users.inviteMethodQr' | transloco }}</span>
+                  <span class="seg-subtitle">{{ 'app.businessManagement.pages.users.inviteMethodQrSubtitle' | transloco }}</span>
+                </ion-label>
+              </ion-segment-button>
+
+              <ion-segment-button value="email" class="method-seg-button">
+                <ion-icon [icon]="mailIcon" aria-hidden="true"></ion-icon>
+                <ion-label>
+                  <span class="seg-title">{{ 'app.businessManagement.pages.users.inviteMethodEmail' | transloco }}</span>
+                  <span class="seg-subtitle">{{ 'app.businessManagement.pages.users.inviteMethodEmailSubtitle' | transloco }}</span>
+                </ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </div>
+
+          @if (invitationError(); as inviteError) {
+            <p class="invitation-error" role="alert">{{ inviteError | transloco }}</p>
+          }
+
+          <!-- Method 1: Instant QR Code Invitation -->
+          @if (inviteMethod() === 'qr') {
+            <div class="invite-mode-container qr-mode">
+              <div class="mode-header-badge">
+                <ion-badge color="success">
+                  <ion-icon [icon]="qrIcon" aria-hidden="true"></ion-icon>
+                  {{ 'app.businessManagement.pages.users.primaryMethodBadge' | transloco }}
+                </ion-badge>
+              </div>
+
+              <div class="qr-mode-body">
+                <!-- QR Code Box -->
+                <div class="qr-display-card">
+                  @if (isCreatingInvitation()) {
+                    <div class="qr-loading-box">
+                      <ion-spinner name="crescent"></ion-spinner>
+                      <p>{{ 'app.businessManagement.pages.users.creatingInvite' | transloco }}</p>
+                    </div>
+                  } @else if (invitationQrCode(); as qrCode) {
+                    <div class="qr-box">
+                      <img [src]="qrCode" [alt]="'app.businessManagement.pages.users.inviteQrAlt' | transloco" />
+                      <span class="qr-scan-badge">
+                        <ion-icon [icon]="qrIcon" aria-hidden="true"></ion-icon>
+                        {{ 'app.businessManagement.pages.users.scanCameraHint' | transloco }}
+                      </span>
+                    </div>
+                  }
+                </div>
+
+                <!-- Controls & Link -->
+                <div class="qr-controls">
+                  <!-- Role Selector -->
+                  <div class="role-selector-field">
+                    <ion-label class="field-label">{{ 'app.businessManagement.pages.users.inviteRoleLabel' | transloco }}</ion-label>
+                    <ion-select
+                      interface="popover"
+                      fill="outline"
+                      [value]="inviteRole()"
+                      (ionChange)="onRoleChange($event)"
+                    >
+                      <ion-select-option value="cashier">{{ 'app.businessManagement.pages.users.roles.cashier' | transloco }}</ion-select-option>
+                      <ion-select-option value="manager">{{ 'app.businessManagement.pages.users.roles.manager' | transloco }}</ion-select-option>
+                      <ion-select-option value="accountant">{{ 'app.businessManagement.pages.users.roles.accountant' | transloco }}</ion-select-option>
+                    </ion-select>
+                  </div>
+
+                  <p class="invite-instructions">
+                    {{ 'app.businessManagement.pages.users.inviteQrHint' | transloco }}
+                  </p>
+                  <p class="invite-note">{{ 'app.businessManagement.pages.users.inviteDetails' | transloco }}</p>
+
+                  @if (invitationUrl(); as inviteUrl) {
+                    <div class="invitation-url-box" dir="ltr">
+                      <span class="url-text">{{ inviteUrl }}</span>
+                    </div>
+
+                    <div class="action-buttons-row">
+                      <ion-button fill="solid" (click)="copyInvitation()">
+                        <ion-icon slot="start" [icon]="isCopied() ? checkmarkIcon : copyIcon" aria-hidden="true"></ion-icon>
+                        {{ (isCopied() ? 'app.businessManagement.pages.users.copied' : 'app.businessManagement.pages.users.copyInvite') | transloco }}
+                      </ion-button>
+                      <ion-button fill="outline" color="medium" [disabled]="isCreatingInvitation()" (click)="createQrInvitation()">
+                        <ion-icon slot="start" [icon]="refreshIcon" aria-hidden="true"></ion-icon>
+                        {{ 'app.businessManagement.pages.users.newInvite' | transloco }}
+                      </ion-button>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Method 2: Email Invitation -->
+          @if (inviteMethod() === 'email') {
+            <div class="invite-mode-container email-mode">
+              <div class="mode-header-badge">
+                <ion-badge color="primary">
+                  <ion-icon [icon]="mailIcon" aria-hidden="true"></ion-icon>
+                  {{ 'app.businessManagement.pages.users.emailMethodTitle' | transloco }}
+                </ion-badge>
+              </div>
+
+              <p class="email-mode-desc">
+                {{ 'app.businessManagement.pages.users.emailMethodDesc' | transloco }}
+              </p>
+
+              <!-- Role Selector for Email -->
+              <div class="role-selector-field">
+                <ion-label class="field-label">{{ 'app.businessManagement.pages.users.inviteRoleLabel' | transloco }}</ion-label>
+                <ion-select
+                  interface="popover"
+                  fill="outline"
+                  [value]="inviteRole()"
+                  (ionChange)="onRoleChange($event)"
+                >
+                  <ion-select-option value="cashier">{{ 'app.businessManagement.pages.users.roles.cashier' | transloco }}</ion-select-option>
+                  <ion-select-option value="manager">{{ 'app.businessManagement.pages.users.roles.manager' | transloco }}</ion-select-option>
+                  <ion-select-option value="accountant">{{ 'app.businessManagement.pages.users.roles.accountant' | transloco }}</ion-select-option>
+                </ion-select>
+              </div>
+
+              @if (invitationEmail(); as assignedEmail) {
+                <!-- Generated for this email state -->
+                <div class="email-result-card">
+                  <div class="email-success-badge">
+                    <ion-chip color="success">
+                      <ion-icon [icon]="checkmarkIcon" aria-hidden="true"></ion-icon>
+                      <ion-label>{{ 'app.businessManagement.pages.users.inviteSentTo' | transloco }} {{ assignedEmail }}</ion-label>
+                    </ion-chip>
+                  </div>
+
+                  <p class="email-success-note">
+                    {{ 'app.businessManagement.pages.users.inviteEmailReady' | transloco }}
+                  </p>
+
+                  @if (invitationUrl(); as inviteUrl) {
+                    <div class="invitation-url-box" dir="ltr">
+                      <span class="url-text">{{ inviteUrl }}</span>
+                    </div>
+
+                    <div class="email-result-actions">
+                      <ion-button fill="solid" color="primary" [href]="getMailtoUrl()" target="_blank">
+                        <ion-icon slot="start" [icon]="mailIcon" aria-hidden="true"></ion-icon>
+                        {{ 'app.businessManagement.pages.users.sendEmailButton' | transloco }}
+                      </ion-button>
+                      <ion-button fill="outline" (click)="copyInvitation()">
+                        <ion-icon slot="start" [icon]="isCopied() ? checkmarkIcon : copyIcon" aria-hidden="true"></ion-icon>
+                        {{ (isCopied() ? 'app.businessManagement.pages.users.copied' : 'app.businessManagement.pages.users.copyInvite') | transloco }}
+                      </ion-button>
+                      <ion-button fill="clear" color="medium" (click)="resetEmailForm()">
+                        {{ 'app.businessManagement.pages.users.clearEmailAssignment' | transloco }}
+                      </ion-button>
+                    </div>
+
+                    @if (invitationQrCode(); as qrCode) {
+                      <div class="email-qr-preview">
+                        <span class="preview-label">{{ 'app.businessManagement.pages.users.inviteQrAlt' | transloco }}</span>
+                        <img [src]="qrCode" [alt]="'app.businessManagement.pages.users.inviteQrAlt' | transloco" />
+                      </div>
+                    }
+                  }
+                </div>
+              } @else {
+                <!-- Email Input Form -->
+                <form (ngSubmit)="submitEmailInvitation()" class="email-input-form">
+                  <div class="email-field-group">
+                    <ion-label class="field-label">{{ 'app.businessManagement.pages.users.inviteEmailLabel' | transloco }}</ion-label>
+                    <ion-input
+                      type="email"
+                      fill="outline"
+                      [placeholder]="'app.businessManagement.pages.users.inviteEmailPlaceholder' | transloco"
+                      [value]="inviteEmail()"
+                      (ionInput)="inviteEmail.set($event.detail.value ?? ''); inviteEmailError.set(null)"
+                    >
+                      <ion-icon slot="start" [icon]="mailIcon" aria-hidden="true"></ion-icon>
+                    </ion-input>
+                    @if (inviteEmailError(); as emailErr) {
+                      <p class="form-error" role="alert">{{ emailErr | transloco }}</p>
+                    }
+                  </div>
+
+                  <div class="email-submit-row">
+                    <ion-button type="submit" [disabled]="isCreatingInvitation() || !inviteEmail().trim()">
+                      @if (isCreatingInvitation()) {
+                        <ion-spinner name="crescent" slot="start"></ion-spinner>
+                      } @else {
+                        <ion-icon slot="start" [icon]="mailIcon" aria-hidden="true"></ion-icon>
+                      }
+                      {{ (isCreatingInvitation()
+                        ? 'app.businessManagement.pages.users.creatingInvite'
+                        : 'app.businessManagement.pages.users.assignEmailBtn') | transloco }}
+                    </ion-button>
+                  </div>
+                </form>
+              }
+            </div>
+          }
+        </ion-content>
+      </ng-template>
+    </ion-modal>
 
     <ion-searchbar
       class="users-search"
@@ -90,6 +298,8 @@
         <table class="users-table">
           <thead>
             <tr>
+              <th scope="col" class="avatar-col">{{ 'app.businessManagement.pages.users.columns.avatar' | transloco }}</th>
+              <th scope="col">{{ 'app.businessManagement.pages.users.columns.name' | transloco }}</th>
               <th scope="col">{{ 'app.businessManagement.pages.users.columns.email' | transloco }}</th>
               <th scope="col">{{ 'app.businessManagement.pages.users.columns.role' | transloco }}</th>
               <th scope="col">{{ 'app.businessManagement.pages.users.columns.branch' | transloco }}</th>
@@ -98,9 +308,23 @@
           <tbody>
             @for (row of table.getRowModel().rows; track row.id) {
               <tr>
-                <td>{{ row.getValue('email') }}</td>
+                <td class="avatar-cell">
+                  <ion-avatar class="user-avatar" [class]="'avatar-' + row.getValue('role')">
+                    @if (getUserAvatar(row); as avatarUrl) {
+                      <img [src]="avatarUrl" alt="" referrerpolicy="no-referrer" />
+                    } @else {
+                      <span class="avatar-initial">{{ getUserInitial(row) }}</span>
+                    }
+                  </ion-avatar>
+                </td>
+                <td class="user-name-cell">
+                  <div class="user-name-wrapper">
+                    <strong>{{ getUserDisplayName(row) }}</strong>
+                  </div>
+                </td>
+                <td class="user-email-cell">{{ row.getValue('email') }}</td>
                 <td>
-                  <ion-badge color="light">
+                  <ion-badge [color]="roleBadgeColor(row.getValue('role'))">
                     {{ roleTranslationKey(row.getValue('role')) | transloco }}
                   </ion-badge>
                 </td>

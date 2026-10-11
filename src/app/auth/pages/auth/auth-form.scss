@@ -5,6 +5,8 @@
 .google-button,.primary-button{min-height:3rem;font-weight:650;--border-radius:.7rem;--box-shadow:none}
 .google-button{--border-color:#0f172a29;--color:var(--ion-color-dark)}
 .google-button ion-icon{font-size:1.25rem}
+.demo-button{margin-top:.4rem;--color:var(--ion-color-primary);font-weight:600;font-size:.85rem}
+.demo-button ion-icon{margin-inline-end:.4rem}
 .primary-button{--background:var(--ion-color-primary);--background-hover:var(--ion-color-primary-shade);--color:var(--ion-color-primary-contrast)}
 .divider{display:flex;align-items:center;gap:.8rem;margin:1.2rem 0;color:var(--ion-color-medium);font-size:.76rem}
 .divider:before,.divider:after{height:1px;flex:1;background:#0f172a1a;content:''}

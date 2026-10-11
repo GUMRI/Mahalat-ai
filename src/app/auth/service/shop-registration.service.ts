@@ -42,6 +42,17 @@ export interface ShopDetails {
 
 export type ShopMemberRole = 'owner' | 'manager' | 'cashier' | 'accountant';
 
+export interface CreateInvitationOptions {
+  email?: string;
+  role?: 'cashier' | 'manager' | 'accountant';
+}
+
+export interface CreatedInvitation {
+  url: string;
+  email: string | null;
+  role: string;
+}
+
 const COUNTRY_CURRENCIES: Record<CountryCode, string> = {
   TN: 'TND',
   DZ: 'DZD',
@@ -101,7 +112,10 @@ export class ShopRegistrationService {
     return isShopMemberRole(role) ? role : null;
   }
 
-  async createUserInvitation(userId: string): Promise<string> {
+  async createUserInvitation(
+    userId: string,
+    options?: CreateInvitationOptions,
+  ): Promise<CreatedInvitation> {
     const shopId = await this.getCurrentShopId(userId);
     if (!shopId) {
       throw new FirebaseError(
@@ -120,6 +134,9 @@ export class ShopRegistrationService {
       'invitations',
       invitationId,
     );
+    const inviteRole = options?.role ?? 'cashier';
+    const inviteEmail = options?.email?.trim().toLowerCase() || null;
+
     await runTransaction(this.firestore, async (transaction) => {
       const [shop, member, invite] = await Promise.all([
         transaction.get(shopRef),
@@ -143,18 +160,90 @@ export class ShopRegistrationService {
 
       transaction.set(inviteRef, {
         branchId,
-        role: 'cashier',
+        role: inviteRole,
+        ...(inviteEmail ? { email: inviteEmail } : {}),
         status: 'pending',
         issuedBy: userId,
         issuedAt: serverTimestamp(),
         expiresAt: Timestamp.fromMillis(Date.now() + 24 * 60 * 60 * 1000),
       });
+
+      if (inviteEmail) {
+        const normalizedEmail = inviteEmail.toLowerCase().trim();
+        const pendingRef = doc(this.firestore, 'pending_invitations', normalizedEmail);
+        transaction.set(pendingRef, {
+          email: normalizedEmail,
+          shopId,
+          shopName: shop.data()?.['name'] ?? '',
+          invitationId,
+          role: inviteRole,
+          expiresAt: Timestamp.fromMillis(Date.now() + 24 * 60 * 60 * 1000),
+          updatedAt: serverTimestamp(),
+        });
+      }
     });
 
     const invitationUrl = new URL('/', window.location.origin);
     invitationUrl.searchParams.set('shopId', shopId);
     invitationUrl.searchParams.set('invitationId', invitationId);
-    return invitationUrl.toString();
+    return {
+      url: invitationUrl.toString(),
+      email: inviteEmail,
+      role: inviteRole,
+    };
+  }
+
+  async findPendingInvitationForUser(
+    email: string,
+  ): Promise<{ shopId: string; invitationId: string; shopName?: string; role?: string } | null> {
+    if (!email || !email.trim()) return null;
+    const normalizedEmail = email.toLowerCase().trim();
+    const pendingRef = doc(this.firestore, 'pending_invitations', normalizedEmail);
+    const snap = await getDoc(pendingRef);
+    if (!snap.exists()) return null;
+
+    const data = snap.data();
+    const expiresAt = data['expiresAt'];
+    if (expiresAt instanceof Timestamp && expiresAt.toMillis() <= Date.now()) {
+      return null;
+    }
+    const shopId = data['shopId'];
+    const invitationId = data['invitationId'];
+    if (typeof shopId === 'string' && typeof invitationId === 'string') {
+      return {
+        shopId,
+        invitationId,
+        shopName: typeof data['shopName'] === 'string' ? data['shopName'] : undefined,
+        role: typeof data['role'] === 'string' ? data['role'] : undefined,
+      };
+    }
+    return null;
+  }
+
+  async peekInvitationDetails(
+    shopId: string,
+    invitationId: string,
+  ): Promise<{ shopName: string; role: string; email: string | null } | null> {
+    try {
+      const [shopSnap, inviteSnap] = await Promise.all([
+        getDoc(doc(this.firestore, 'shops', shopId)),
+        getDoc(doc(this.firestore, 'shops', shopId, 'invitations', invitationId)),
+      ]);
+      if (!shopSnap.exists() || !inviteSnap.exists()) return null;
+      const inviteData = inviteSnap.data();
+      if (inviteData['status'] !== 'pending') return null;
+      const expiresAt = inviteData['expiresAt'];
+      if (expiresAt instanceof Timestamp && expiresAt.toMillis() <= Date.now()) {
+        return null;
+      }
+      return {
+        shopName: shopSnap.data()?.['name'] || '',
+        role: typeof inviteData['role'] === 'string' ? inviteData['role'] : 'cashier',
+        email: typeof inviteData['email'] === 'string' ? inviteData['email'] : null,
+      };
+    } catch {
+      return null;
+    }
   }
 
   async getShopDetails(userId: string): Promise<ShopDetails | null> {
@@ -282,9 +371,13 @@ export class ShopRegistrationService {
         acceptedBy: userId,
         acceptedAt: serverTimestamp(),
       });
+      const memberDisplayName = (email.split('@')[0] || 'User')
+        .replace(/[._-]+/g, ' ')
+        .replace(/\b\w/g, (char) => char.toUpperCase());
       transaction.set(memberRef, {
         uid: userId,
         email,
+        displayName: memberDisplayName,
         branchId,
         role,
         _deleted: false,
@@ -293,9 +386,13 @@ export class ShopRegistrationService {
       });
       transaction.set(
         userRef,
-        { uid: userId, email, shopId: invitation.shopId, branchId, role, createdAt },
+        { uid: userId, email, displayName: memberDisplayName, shopId: invitation.shopId, branchId, role, createdAt },
         { merge: true },
       );
+
+      const normalizedEmail = email.toLowerCase().trim();
+      const pendingRef = doc(this.firestore, 'pending_invitations', normalizedEmail);
+      transaction.delete(pendingRef);
     });
     return invitation.shopId;
   }
@@ -349,9 +446,13 @@ export class ShopRegistrationService {
         createdAt,
         schemaVersion: 1,
       });
+      const ownerDisplayName = (email.split('@')[0] || 'Owner')
+        .replace(/[._-]+/g, ' ')
+        .replace(/\b\w/g, (char) => char.toUpperCase());
       transaction.set(userRef, {
         uid: userId,
         email,
+        displayName: ownerDisplayName,
         shopId: userId,
         branchId: 'main',
         role: 'owner',
@@ -360,6 +461,7 @@ export class ShopRegistrationService {
       transaction.set(memberRef, {
         uid: userId,
         email,
+        displayName: ownerDisplayName,
         branchId: 'main',
         role: 'owner',
         _deleted: false,

@@ -9,6 +9,8 @@ export const SHOP_USER_RXDB_SCHEMA: RxJsonSchema<ShopUser> = {
   properties: {
     id: { type: 'string', maxLength: 128 },
     uid: { type: 'string', maxLength: 128 },
+    displayName: { type: 'string', maxLength: 128 },
+    avatarUrl: { type: 'string', maxLength: 1024 },
     email: { type: 'string', maxLength: 320 },
     branchId: { type: 'string', maxLength: 128 },
     role: {

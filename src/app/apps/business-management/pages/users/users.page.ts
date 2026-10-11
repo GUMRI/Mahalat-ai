@@ -3,16 +3,39 @@ import { injectLiveQuery } from '@tanstack/angular-db';
 import { ilike } from '@tanstack/db';
 import { injectTable, tableFeatures } from '@tanstack/angular-table';
 import {
+  IonAvatar,
   IonBadge,
   IonButton,
+  IonButtons,
+  IonChip,
   IonContent,
+  IonHeader,
   IonIcon,
+  IonInput,
+  IonLabel,
+  IonModal,
   IonSearchbar,
+  IonSegment,
+  IonSegmentButton,
+  IonSelect,
+  IonSelectOption,
   IonSpinner,
+  IonTitle,
+  IonToolbar,
 } from '@ionic/angular';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { BrowserQRCodeSvgWriter } from '@zxing/browser';
-import { peopleOutline } from 'ionicons/icons';
+import {
+  checkmarkOutline,
+  closeOutline,
+  copyOutline,
+  mailOutline,
+  openOutline,
+  peopleOutline,
+  personAddOutline,
+  qrCodeOutline,
+  refreshOutline,
+} from 'ionicons/icons';
 import { FirebaseAuthService } from '../../../../firebase/firebase-auth.service';
 import { ShopRegistrationService } from '../../../../auth/service/shop-registration.service';
 import { LocalFirstUsersService } from '../../../../local-first/service/local-first-users.service';
@@ -23,6 +46,8 @@ import type {
 
 const USERS_TABLE_FEATURES = tableFeatures({});
 const USERS_TABLE_COLUMNS = [
+  { accessorKey: 'avatarUrl', id: 'avatar' },
+  { accessorKey: 'displayName', id: 'name' },
   { accessorKey: 'email', id: 'email' },
   { accessorKey: 'role', id: 'role' },
   { accessorKey: 'branchId', id: 'branchId' },
@@ -33,12 +58,25 @@ const USERS_TABLE_COLUMNS = [
   templateUrl: './users.page.html',
   styleUrl: './users.page.scss',
   imports: [
+    IonAvatar,
     IonBadge,
     IonButton,
+    IonButtons,
+    IonChip,
     IonContent,
+    IonHeader,
     IonIcon,
+    IonInput,
+    IonLabel,
+    IonModal,
     IonSearchbar,
+    IonSegment,
+    IonSegmentButton,
+    IonSelect,
+    IonSelectOption,
     IonSpinner,
+    IonTitle,
+    IonToolbar,
     TranslocoPipe,
   ],
 })
@@ -59,10 +97,18 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
   readonly isLoading = signal(true);
   readonly search = signal('');
   readonly canInvite = signal(false);
+  readonly isInviteModalOpen = signal(false);
+  readonly inviteMethod = signal<'qr' | 'email'>('qr');
+  readonly inviteEmail = signal('');
+  readonly inviteRole = signal<'cashier' | 'manager' | 'accountant'>('cashier');
+  readonly inviteEmailError = signal<string | null>(null);
   readonly isCreatingInvitation = signal(false);
   readonly invitationUrl = signal<string | null>(null);
+  readonly invitationEmail = signal<string | null>(null);
+  readonly invitationRole = signal<ShopUserRole>('cashier');
   readonly invitationQrCode = signal<string | null>(null);
   readonly invitationError = signal<string | null>(null);
+  readonly isCopied = signal(false);
   private readonly queryRetry = signal(0);
   readonly usersQuery = injectLiveQuery({
     params: () => ({
@@ -77,6 +123,8 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
         .where(({ users }) => ilike(users.email, `%${params.search}%`))
         .select(({ users }) => ({
           id: users.id,
+          avatarUrl: users.avatarUrl,
+          displayName: users.displayName,
           email: users.email,
           role: users.role,
           branchId: users.branchId,
@@ -90,6 +138,14 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
     getRowId: (user: Pick<ShopUser, 'id'>) => user.id,
   }));
   readonly peopleIcon = peopleOutline;
+  readonly personAddIcon = personAddOutline;
+  readonly qrIcon = qrCodeOutline;
+  readonly refreshIcon = refreshOutline;
+  readonly mailIcon = mailOutline;
+  readonly closeIcon = closeOutline;
+  readonly copyIcon = copyOutline;
+  readonly checkmarkIcon = checkmarkOutline;
+  readonly openIcon = openOutline;
 
   ngOnInit(): void {
     void this.loadUsers();
@@ -106,6 +162,48 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
     await this.loadUsers();
   }
 
+  getUserDisplayName(row: { getValue: (key: string) => unknown }): string {
+    const rawName = row.getValue('name');
+    if (typeof rawName === 'string' && rawName.trim()) {
+      return rawName.trim();
+    }
+    const email = row.getValue('email');
+    if (typeof email === 'string' && email) {
+      const localPart = email.split('@')[0] || '';
+      return (
+        localPart
+          .replace(/[._-]+/g, ' ')
+          .replace(/\b\w/g, (char) => char.toUpperCase()) || email
+      );
+    }
+    return '—';
+  }
+
+  getUserAvatar(row: { getValue: (key: string) => unknown }): string | null {
+    const avatar = row.getValue('avatar');
+    return typeof avatar === 'string' && avatar.trim() ? avatar.trim() : null;
+  }
+
+  getUserInitial(row: { getValue: (key: string) => unknown }): string {
+    const name = this.getUserDisplayName(row);
+    return name && name !== '—' ? name.charAt(0).toUpperCase() : 'م';
+  }
+
+  roleBadgeColor(role: ShopUserRole): string {
+    switch (role) {
+      case 'owner':
+        return 'primary';
+      case 'manager':
+        return 'success';
+      case 'cashier':
+        return 'warning';
+      case 'accountant':
+        return 'tertiary';
+      default:
+        return 'light';
+    }
+  }
+
   roleTranslationKey(role: ShopUserRole): string {
     return `app.businessManagement.pages.users.roles.${role}`;
   }
@@ -116,19 +214,77 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
       : branchId;
   }
 
-  async createInvitation(): Promise<void> {
+  openInviteModal(): void {
+    this.isInviteModalOpen.set(true);
+    this.inviteEmailError.set(null);
+    if (!this.invitationUrl()) {
+      void this.generateInvitation(
+        this.inviteMethod() === 'email' && this.inviteEmail().trim()
+          ? this.inviteEmail().trim()
+          : undefined,
+      );
+    }
+  }
+
+  closeInviteModal(): void {
+    this.isInviteModalOpen.set(false);
+  }
+
+  async onInviteMethodChange(event: CustomEvent<{ value?: unknown }>): Promise<void> {
+    const method = event.detail.value as 'qr' | 'email' | undefined;
+    if (method === 'qr' || method === 'email') {
+      this.inviteMethod.set(method);
+      if (method === 'qr') {
+        // If current invitation was tied to a specific email, regenerate open QR
+        if (this.invitationEmail()) {
+          await this.generateInvitation();
+        } else if (!this.invitationUrl()) {
+          await this.generateInvitation();
+        }
+      } else if (method === 'email') {
+        // If an email was already entered, generate or keep ready
+        if (this.inviteEmail().trim() && this.invitationEmail() !== this.inviteEmail().trim()) {
+          this.inviteEmailError.set(null);
+        }
+      }
+    }
+  }
+
+  async createQrInvitation(): Promise<void> {
+    await this.generateInvitation();
+  }
+
+  async onRoleChange(event: CustomEvent<{ value?: unknown }>): Promise<void> {
+    const role = event.detail.value as 'cashier' | 'manager' | 'accountant' | undefined;
+    if (role && (role === 'cashier' || role === 'manager' || role === 'accountant')) {
+      this.inviteRole.set(role);
+      const emailToUse =
+        this.inviteMethod() === 'email'
+          ? this.invitationEmail() || this.inviteEmail().trim() || undefined
+          : undefined;
+      await this.generateInvitation(emailToUse);
+    }
+  }
+
+  async generateInvitation(email?: string): Promise<void> {
     const user = this.auth.user();
-    if (!user || !this.canInvite()) return;
+    if (!user || !this.canInvite() || this.isCreatingInvitation()) return;
 
     this.isCreatingInvitation.set(true);
     this.invitationError.set(null);
-    this.invitationUrl.set(null);
-    this.invitationQrCode.set(null);
+    this.isCopied.set(false);
     this.releaseInvitationQrCode();
+
     try {
-      const url = await this.registration.createUserInvitation(user.uid);
-      this.invitationUrl.set(url);
-      const svg = new BrowserQRCodeSvgWriter().write(url, 256, 256);
+      const result = await this.registration.createUserInvitation(user.uid, {
+        email: email ? email.trim() : undefined,
+        role: this.inviteRole(),
+      });
+      this.invitationUrl.set(result.url);
+      this.invitationEmail.set(result.email);
+      this.invitationRole.set(result.role as ShopUserRole);
+
+      const svg = new BrowserQRCodeSvgWriter().write(result.url, 256, 256);
       this.invitationQrObjectUrl = URL.createObjectURL(
         new Blob([new XMLSerializer().serializeToString(svg)], {
           type: 'image/svg+xml',
@@ -136,11 +292,34 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
       );
       this.invitationQrCode.set(this.invitationQrObjectUrl);
     } catch (error) {
-      console.error('Could not create a shop invitation.', error);
+      console.warn('Could not create a shop invitation.', error);
       this.invitationError.set('app.businessManagement.pages.users.inviteError');
     } finally {
       this.isCreatingInvitation.set(false);
     }
+  }
+
+  async submitEmailInvitation(): Promise<void> {
+    const email = this.inviteEmail().trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      this.inviteEmailError.set('app.businessManagement.pages.users.inviteEmailInvalid');
+      return;
+    }
+    this.inviteEmailError.set(null);
+    await this.generateInvitation(email);
+  }
+
+  async resetEmailForm(): Promise<void> {
+    this.inviteEmail.set('');
+    this.inviteEmailError.set(null);
+    this.invitationEmail.set(null);
+    await this.generateInvitation();
+  }
+
+  async clearEmailAssignment(): Promise<void> {
+    this.inviteEmail.set('');
+    this.inviteEmailError.set(null);
+    await this.generateInvitation();
   }
 
   async copyInvitation(): Promise<void> {
@@ -148,17 +327,33 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
     if (!url) return;
     try {
       await navigator.clipboard.writeText(url);
+      this.isCopied.set(true);
+      setTimeout(() => this.isCopied.set(false), 3000);
     } catch (error) {
-      console.error('Could not copy the shop invitation link.', error);
+      console.warn('Could not copy the shop invitation link.', error);
       this.invitationError.set('app.businessManagement.pages.users.copyError');
     }
   }
 
+  getMailtoUrl(): string {
+    const email = this.invitationEmail() || this.inviteEmail().trim();
+    const url = this.invitationUrl();
+    if (!url) return '';
+    const subject = encodeURIComponent('دعوة للانضمام إلى المتجر');
+    const roleKey = this.roleTranslationKey(this.invitationRole());
+    const body = encodeURIComponent(
+      `مرحبًا،\n\nتمت دعوتك للانضمام إلى فريق عمل المتجر بصلاحية (${this.invitationRole()}).\n\nللانضمام إلى المتجر، اضغط على الرابط التالي:\n${url}\n\nتنتهي صلاحية هذه الدعوة بعد 24 ساعة.`
+    );
+    return `mailto:${email}?subject=${subject}&body=${body}`;
+  }
+
   dismissInvitation(): void {
     this.invitationUrl.set(null);
+    this.invitationEmail.set(null);
     this.invitationQrCode.set(null);
     this.invitationError.set(null);
     this.releaseInvitationQrCode();
+    this.isInviteModalOpen.set(false);
   }
 
   ngOnDestroy(): void {
@@ -190,7 +385,7 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
       this.syncStatus.set(users.syncError);
       this.isLoading.set(false);
     } catch (error) {
-      console.error('Could not load shop users.', error);
+      console.warn('Could not load shop users.', error);
       this.loadError.set(true);
       this.isLoading.set(false);
     }
