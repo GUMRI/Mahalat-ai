@@ -26,6 +26,95 @@
   line-height: 1.55;
 }
 
+.firebase-console-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(var(--ion-color-medium-rgb), 0.15);
+
+  .scope-selectors-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+
+    .selector-field {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--ion-color-light-tint);
+      border: 1px solid rgba(var(--ion-color-medium-rgb), 0.2);
+      border-radius: 0.65rem;
+      padding: 0.2rem 0.65rem;
+
+      ion-icon {
+        font-size: 1.15rem;
+        color: var(--ion-color-primary);
+      }
+
+      ion-select {
+        min-width: 11rem;
+        --padding-start: 0;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      &.is-disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .console-subpage-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    border-radius: 0.75rem;
+    padding: 0.35rem 0;
+
+    .console-tab-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.6rem;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--ion-color-medium-shade);
+      transition: background-color 0.15s, color 0.15s;
+
+      ion-icon {
+        font-size: 1rem;
+      }
+
+      &:hover {
+        background: rgba(var(--ion-color-primary-rgb), 0.08);
+        color: var(--ion-color-primary);
+      }
+
+      &.console-tab-active {
+        background: var(--ion-color-primary);
+        color: var(--ion-color-primary-contrast);
+      }
+    }
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .overview-empty,
 .empty-state {
   display: grid;
@@ -52,3 +141,4 @@
   color: var(--ion-color-medium-shade);
   line-height: 1.55;
 }
+

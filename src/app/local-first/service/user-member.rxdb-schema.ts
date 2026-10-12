@@ -15,7 +15,7 @@ export const SHOP_USER_RXDB_SCHEMA: RxJsonSchema<ShopUser> = {
     branchId: { type: 'string', maxLength: 128 },
     role: {
       type: 'string',
-      enum: ['owner', 'manager', 'cashier', 'accountant'],
+      enum: ['owner', 'manager', 'cashier', 'accountant', 'worker', 'client'],
     },
     createdAt: {
       type: 'object',

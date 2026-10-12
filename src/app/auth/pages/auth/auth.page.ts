@@ -28,6 +28,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FirebaseError } from 'firebase/app';
 import { flashOutline, logoGoogle } from 'ionicons/icons';
 import { FirebaseAuthService } from '../../../firebase/firebase-auth.service';
+import { PlatformUserService } from '../../../firebase/platform-user.service';
 import { AppLocale } from '../../../settings/i18n/i18n.config';
 import { LangService } from '../../../settings/i18n/i18n.service';
 import { AuthBrandComponent } from '../../components/auth-brand/auth-brand.component';
@@ -116,6 +117,7 @@ export class AuthPage {
   private readonly route = inject(ActivatedRoute);
   readonly lang = inject(LangService);
   readonly registration = inject(ShopRegistrationService);
+  readonly platformUserService = inject(PlatformUserService);
   readonly mode = signal<AuthMode>('signIn');
   readonly screen = signal<AuthScreen>('auth');
   readonly email = signal('');
@@ -422,6 +424,30 @@ export class AuthPage {
         this.isAutoInviteAlertOpen.set(true);
       } else {
         this.screen.set('chooseShop');
+        // Check platform notifications for direct invites
+        if (user) {
+          this.platformUserService.watchNotifications(user.uid, (notifs) => {
+            const inviteNotif = notifs.find(
+              (n) => n.type === 'invitation' && n.status === 'unread' && n.data?.['shopId'] && n.data?.['invitationId']
+            );
+            if (inviteNotif && inviteNotif.data) {
+              const shopId = String(inviteNotif.data['shopId']);
+              const invitationId = String(inviteNotif.data['invitationId']);
+              const url = new URL('/', window.location.origin);
+              url.searchParams.set('shopId', shopId);
+              url.searchParams.set('invitationId', invitationId);
+              this.invitationUrl.set(url.toString());
+              this.detectedInvite.set({
+                shopId,
+                invitationId,
+                shopName: inviteNotif.data['shopName'] as string,
+                role: inviteNotif.data['role'] as string,
+              });
+              this.isAutoInviteAlertOpen.set(true);
+            }
+          });
+        }
+
         // Automatically check if an invitation was sent to the user's email
         if (user?.email) {
           try {

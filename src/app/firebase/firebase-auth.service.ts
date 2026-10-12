@@ -11,11 +11,13 @@ import {
   signOut,
 } from 'firebase/auth';
 import { FIREBASE_AUTH } from './firebase.providers';
+import { PlatformUserService } from './platform-user.service';
 
 @Injectable({ providedIn: 'root' })
 export class FirebaseAuthService {
   private readonly auth: Auth = inject(FIREBASE_AUTH);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly platformUser = inject(PlatformUserService);
 
   readonly user = signal<User | null>(null);
   readonly isLoading = signal(true);
@@ -28,8 +30,20 @@ export class FirebaseAuthService {
   constructor() {
     const unsubscribe = onAuthStateChanged(
       this.auth,
-      (user) => {
+      async (user) => {
         this.user.set(user);
+        if (user) {
+          try {
+            await this.platformUser.ensureUserProfile({
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              photoURL: user.photoURL,
+            });
+          } catch (e) {
+            console.warn('Failed to ensure platform user profile:', e);
+          }
+        }
         this.isLoading.set(false);
         this.authError.set(null);
         this.resolveInitialized();

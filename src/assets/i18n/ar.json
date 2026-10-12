@@ -182,7 +182,20 @@
       "templateNote": "سيُنشأ دليل الحسابات الموحد مع الفرع الرئيسي عند إنشاء متجرك.",
       "back": "رجوع",
       "continue": "متابعة",
-      "finish": "إنشاء متجري"
+      "finish": "إنشاء متجري ومتابعة تسجيل الجهاز",
+      "deviceRegistration": {
+        "title": "تسجيل هذا الجهاز في النشاط",
+        "subtitle": "إجراء أمني إلزامي قبل الدخول إلى لوحة التحكم",
+        "deviceNameLabel": "اسم الجهاز المعرّف",
+        "deviceNamePlaceholder": "مثال: كاشير 1، كمبيوتر الإدارة",
+        "platformLabel": "بيئة ونظام الجهاز",
+        "deviceIdLabel": "المعرّف الأمني للجهاز",
+        "passkeyNotice": "سيتم ربط بصمة الإصبع أو Face ID (Passkey) بهذا الجهاز لتسجيل الدخول الآمن مستقبلاً.",
+        "registerButton": "تسجيل الجهاز وتفعيل الـ Passkey",
+        "registering": "جارٍ تسجيل وتوثيق الجهاز...",
+        "success": "تم تسجيل الجهاز وتفعيل الـ Passkey بنجاح! يمكنك الآن الدخول إلى لوحة التحكم.",
+        "enterDashboard": "الدخول إلى لوحة التحكم"
+      }
     },
     "errors": {
       "generic": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
@@ -557,9 +570,14 @@
             "inviteEmailInvalid": "يرجى إدخال بريد إلكتروني صالح.",
             "assignEmailBtn": "إنشاء دعوة للبريد",
             "clearEmailAssignment": "دعوة مستخدم آخر أو بريد جديد",
-            "sendEmailButton": "إرسال عبر تطبيق البريد",
-            "inviteSentTo": "مخصصة للبريد:",
-            "inviteEmailReady": "تم إنشاء رابط الدعوة وتخصيصه للبريد بنجاح",
+            "inviteMethodSearch": "بحث في المنصة",
+            "inviteMethodSearchSubtitle": "البحث بالاسم أو البريد وإرسال إشعار",
+            "searchPlatformTitle": "دعوة مستخدم مسجل في منصة محلات",
+            "searchPlatformDesc": "ابحث عن أي مستخدم مسجل بالبريد أو الاسم، وتصل الدعوة مباشرة إلى قائمة إشعاراته.",
+            "searchPlaceholder": "ابحث بالاسم أو البريد الإلكتروني...",
+            "searchNoResults": "لم يتم العثور على مستخدمين مسجلين بهذه البيانات.",
+            "inviteUserBtn": "إرسال دعوة إلى إشعاراته",
+            "inviteSentSuccess": "تم إرسال الدعوة إلى إشعارات المستخدم بنجاح!",
             "cancel": "إلغاء",
             "inviteError": "تعذر إنشاء الدعوة. تحقق من صلاحياتك في المتجر ثم أعد المحاولة.",
             "copyError": "تعذر نسخ الرابط. حدده وانسخه من الأعلى.",
@@ -578,13 +596,16 @@
               "name": "اسم المستخدم",
               "email": "البريد الإلكتروني",
               "role": "الصلاحية",
+              "shops": "المحلات المسندة",
               "branch": "الفرع"
             },
             "roles": {
               "owner": "مالك",
-              "manager": "مدير",
+              "manager": "مدير عام / مدير",
               "cashier": "كاشير",
-              "accountant": "محاسب"
+              "accountant": "محاسب",
+              "worker": "عامل (Worker)",
+              "client": "عميل (Client)"
             },
             "branches": {
               "main": "الفرع الرئيسي"
@@ -600,6 +621,33 @@
             "description": "أدر المحلات المرتبطة بحسابك.",
             "empty": "إدارة المحلات والتبديل بينها غير متاحة في هذه الصفحة بعد."
           }
+        },
+        "profile": {
+          "title": "الملف الشخصي وإدارة الأجهزة",
+          "subtitle": "بيانات العضوية، الأجهزة المعتمدة، والدخول بالـ Passkey",
+          "personalInfo": "البيانات الشخصية",
+          "displayName": "الاسم الكامل",
+          "email": "البريد الإلكتروني",
+          "userUid": "معرّف الحساب",
+          "activeRole": "صلاحيتك في النشاط",
+          "membershipStatus": "حالة العضوية",
+          "verifiedMember": "عضوية معتمدة وموثقة",
+          "newlyJoinedNotice": "تم قبول عضويتك في النشاط بنجاح! للوصول إلى مهام ولوحة النشاط، يُرجى تسجيل الدخول بالبصمة أو Face ID (Passkey) أدناه.",
+          "deviceSectionTitle": "أمان الجهاز والـ Passkey",
+          "currentDeviceTitle": "هذا الجهاز",
+          "deviceRegistered": "جهاز مسجل ومعتمد للنشاط",
+          "deviceNotRegistered": "هذا الجهاز غير مسجل بعد في النشاط",
+          "registerDeviceBtn": "تسجيل هذا الجهاز في النشاط",
+          "passkeyStatus": "Passkey الجهاز (بصمة الإصبع / Face ID)",
+          "passkeyActive": "مفعّل وجاهز",
+          "passkeyInactive": "غير مفعّل",
+          "enablePasskeyBtn": "إعداد Passkey بيومتري للجهاز",
+          "activityLoginTitle": "تسجيل الدخول إلى النشاط عبر البصمة و Face ID",
+          "activityLoginSubtitle": "استخدم الـ Passkey البيومتري المعتمد لجهازك لتأكيد هويتك والوصول إلى مهام النشاط",
+          "activityLoginBtn": "تسجيل الدخول بالبصمة / Face ID (Passkey)",
+          "activityLoginSuccess": "تم التحقق البيومتري بنجاح! الجلسة مفتوحة للنشاط.",
+          "enterActivityBtn": "الانتقال إلى لوحة العمليات والنشاط",
+          "registeredDevicesList": "الأجهزة المسجلة لحسابك"
         },
         "errors": {
           "shopLoad": "تعذر تحميل بيانات المتجر. يرجى المحاولة مرة أخرى.",

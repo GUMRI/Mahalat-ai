@@ -1,11 +1,70 @@
 <ion-content class="business-management-content" [fullscreen]="true">
   <main class="business-management-main">
-    @if (page() !== 'overview') {
+    <!-- Firebase Console Style Header: 1. Select Shop, 2. Select Type, 3. Title, 4. Tabs -->
+    <header class="firebase-console-header">
+      @if (!scope.shouldHideBothSelectors()) {
+        <div class="scope-selectors-bar">
+          <!-- 1. select لاختيار المحل -->
+          <div class="selector-field shop-field">
+            <ion-icon [icon]="shopIcon" aria-hidden="true"></ion-icon>
+            <label class="sr-only">اختر المحل</label>
+            <ion-select
+              interface="popover"
+              fill="outline"
+              [value]="scope.selectedShopId()"
+              (ionChange)="onShopChange($event)"
+              placeholder="المحل"
+            >
+              <ion-select-option value="all">كل المحلات (All Shops)</ion-select-option>
+              @for (s of scope.filteredShops(); track s.id) {
+                <ion-select-option [value]="s.id">{{ s.name }}</ion-select-option>
+              }
+            </ion-select>
+          </div>
+
+          <!-- 2. select لاختيار نوع المحل (مع الإخفاء التدريجي والتعطيل عند اختيار محل محدد) -->
+          @if (!scope.shouldHideTypeSelector()) {
+            <div class="selector-field type-field" [class.is-disabled]="scope.isTypeSelectorDisabled()">
+              <ion-icon [icon]="gridIcon" aria-hidden="true"></ion-icon>
+              <label class="sr-only">نوع المحل</label>
+              <ion-select
+                interface="popover"
+                fill="outline"
+                [disabled]="scope.isTypeSelectorDisabled()"
+                [value]="scope.selectedShopType()"
+                (ionChange)="onTypeChange($event)"
+                placeholder="نوع المحل"
+              >
+                @for (t of shopTypes; track t.key) {
+                  <ion-select-option [value]="t.key">{{ t.label }}</ion-select-option>
+                }
+              </ion-select>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- 3. عنوان الصفحة -->
       <section class="page-heading">
         <h1>{{ content.title | transloco }}</h1>
         <p>{{ content.description | transloco }}</p>
       </section>
-    }
+
+      <!-- 4. شريط تبويبات للتنقل بين الصفحات الفرعية -->
+      <nav class="console-subpage-tabs" aria-label="أقسام إدارة النشاط">
+        @for (item of navItems; track item.key) {
+          <a
+            class="console-tab-item"
+            [routerLink]="item.route"
+            routerLinkActive="console-tab-active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon [icon]="item.icon" aria-hidden="true"></ion-icon>
+            <span>{{ item.label | transloco }}</span>
+          </a>
+        }
+      </nav>
+    </header>
 
     @if (page() === 'overview') {
       <ng-content select="[overview-content]"></ng-content>
@@ -18,3 +77,4 @@
     }
   </main>
 </ion-content>
+

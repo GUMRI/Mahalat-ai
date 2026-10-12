@@ -1,10 +1,12 @@
-import { Component, input } from '@angular/core';
+import { Component, input, inject } from '@angular/core';
 import {
   IonButton,
   IonContent,
   IonIcon,
+  IonSelect,
+  IonSelectOption,
 } from '@ionic/angular';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import {
   bagHandleOutline,
@@ -14,7 +16,10 @@ import {
   peopleOutline,
   receiptOutline,
   walletOutline,
+  storefrontOutline,
+  gridOutline,
 } from 'ionicons/icons';
+import { BusinessScopeService, SHOP_TYPES } from '../../services/business-scope.service';
 
 export type BusinessManagementPageKey =
   | 'overview'
@@ -123,12 +128,20 @@ const PAGE_CONTENT: Record<
     IonButton,
     IonContent,
     IonIcon,
+    IonSelect,
+    IonSelectOption,
     RouterLink,
+    RouterLinkActive,
     TranslocoPipe,
   ],
 })
 export class BusinessManagementSectionPage {
+  readonly scope = inject(BusinessScopeService);
   readonly page = input.required<BusinessManagementPageKey>();
+  readonly navItems = BUSINESS_MANAGEMENT_NAVIGATION_ITEMS;
+  readonly shopTypes = SHOP_TYPES;
+  readonly shopIcon = storefrontOutline;
+  readonly gridIcon = gridOutline;
 
   get pageIcon(): string {
     return BUSINESS_MANAGEMENT_NAVIGATION_ITEMS.find((item) => item.key === this.page())?.icon ?? bagHandleOutline;
@@ -137,4 +150,17 @@ export class BusinessManagementSectionPage {
   get content() {
     return PAGE_CONTENT[this.page()];
   }
+
+  onShopChange(event: CustomEvent<{ value: string }>): void {
+    if (event.detail.value) {
+      this.scope.setSelectedShop(event.detail.value);
+    }
+  }
+
+  onTypeChange(event: CustomEvent<{ value: string }>): void {
+    if (event.detail.value) {
+      this.scope.setSelectedType(event.detail.value);
+    }
+  }
 }
+

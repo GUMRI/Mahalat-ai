@@ -1,6 +1,12 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 
-export type ShopUserRole = 'owner' | 'manager' | 'cashier' | 'accountant';
+export type ShopUserRole =
+  | 'owner'
+  | 'manager'
+  | 'cashier'
+  | 'accountant'
+  | 'worker'
+  | 'client';
 
 export type ShopUser = Record<string, unknown> & {
   id: string;
@@ -74,6 +80,9 @@ function isShopUserRole(value: unknown): value is ShopUserRole {
     value === 'owner' ||
     value === 'manager' ||
     value === 'cashier' ||
-    value === 'accountant'
+    value === 'accountant' ||
+    value === 'worker' ||
+    value === 'client'
   );
 }
+

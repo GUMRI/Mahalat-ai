@@ -83,6 +83,20 @@
             </ion-chip>
           </a>
           <ion-button
+            class="switch-user-btn"
+            fill="outline"
+            size="small"
+            color="light"
+            (click)="userSwitchModal.openModal()"
+            title="تغيير المستخدم داخل النشاط"
+          >
+            <ion-icon slot="start" [icon]="personIcon" aria-hidden="true"></ion-icon>
+            <span>{{ deviceSession.activeActivityUser()?.displayName || 'تبديل المستخدم' }}</span>
+          </ion-button>
+
+          <app-user-switch-modal #userSwitchModal />
+
+          <ion-button
             [id]="notificationsTriggerId"
             class="notifications-trigger"
             fill="clear"

@@ -1,0 +1,105 @@
+<ion-modal [isOpen]="isOpen()" (didDismiss)="closeModal()" class="user-switch-modal">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>تسجيل الدخول داخل النشاط (تبديل المستخدم)</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeModal()" aria-label="إغلاق">
+            <ion-icon slot="icon-only" [icon]="closeIcon" aria-hidden="true"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding switch-modal-content">
+      <div class="modal-instruction">
+        <p>اختر المستخدم المرتبط بهذا الجهاز ثم أدخل رمز PIN أو استخدم البصمة:</p>
+      </div>
+
+      <!-- Users Grid / List -->
+      <div class="device-users-row">
+        @for (u of users(); track u.uid) {
+          <button
+            type="button"
+            class="user-card-button"
+            [class.is-selected]="selectedUser()?.uid === u.uid"
+            (click)="selectUser(u)"
+          >
+            <ion-avatar class="user-btn-avatar">
+              <span>{{ u.displayName.charAt(0) }}</span>
+            </ion-avatar>
+            <div class="user-btn-meta">
+              <strong>{{ u.displayName }}</strong>
+              <small>{{ u.role }}</small>
+            </div>
+            @if (activeUser()?.uid === u.uid) {
+              <ion-chip color="success" class="active-badge">النشط حالياً</ion-chip>
+            }
+          </button>
+        }
+      </div>
+
+      <!-- Mode Selector -->
+      <div class="method-segment-wrapper">
+        <ion-segment [value]="switchMode()" (ionChange)="onSegmentChange($event)">
+          <ion-segment-button value="pin">
+            <ion-icon [icon]="pinIcon"></ion-icon>
+            <ion-label>رمز PIN (أوفلاين)</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="biometric">
+            <ion-icon [icon]="biometricIcon"></ion-icon>
+            <ion-label>بصمة / Face ID</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+
+      <!-- PIN Pad Screen -->
+      @if (switchMode() === 'pin') {
+        <div class="pin-entry-card">
+          <div class="pin-display">
+            @for (dot of [0, 1, 2, 3]; track dot) {
+              <span class="pin-dot" [class.is-filled]="inputPin().length > dot"></span>
+            }
+          </div>
+
+          @if (pinError(); as err) {
+            <p class="pin-error-text" role="alert">{{ err }}</p>
+          }
+
+          @if (isLockedOut()) {
+            <div class="lockout-notice">
+              <ion-icon [icon]="lockIcon" color="danger"></ion-icon>
+              <p>مغلق مؤقتاً لحماية الحساب. يرجى الانتظار 30 ثانية.</p>
+            </div>
+          } @else {
+            <div class="keypad-grid">
+              @for (digit of ['1', '2', '3', '4', '5', '6', '7', '8', '9']; track digit) {
+                <button type="button" class="num-key" (click)="appendPinDigit(digit)">
+                  {{ digit }}
+                </button>
+              }
+              <button type="button" class="num-key func-key" (click)="clearPin()">C</button>
+              <button type="button" class="num-key" (click)="appendPinDigit('0')">0</button>
+              <button type="button" class="num-key func-key" (click)="submitPin()">✓</button>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Biometric Screen -->
+      @if (switchMode() === 'biometric') {
+        <div class="biometric-card">
+          <div class="biometric-icon-large">
+            <ion-icon [icon]="biometricIcon"></ion-icon>
+          </div>
+          <h3>تأكيد الدخول بالبصمة أو الوجه</h3>
+          <p>استخدم مستشعر البصمة على جهازك لتأكيد هوية <strong>{{ selectedUser()?.displayName }}</strong> والتبديل فوراً.</p>
+          <ion-button expand="block" size="large" (click)="submitBiometric()">
+            <ion-icon slot="start" [icon]="biometricIcon"></ion-icon>
+            تأكيد البصمة الآن
+          </ion-button>
+        </div>
+      }
+    </ion-content>
+  </ng-template>
+</ion-modal>

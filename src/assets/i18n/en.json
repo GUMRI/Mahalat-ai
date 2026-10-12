@@ -557,9 +557,14 @@
             "inviteEmailInvalid": "Please enter a valid email address.",
             "assignEmailBtn": "Create Email Invite",
             "clearEmailAssignment": "Invite Another Email",
-            "sendEmailButton": "Send via Email App",
-            "inviteSentTo": "Restricted to email:",
-            "inviteEmailReady": "Invitation link created and restricted to email",
+            "inviteMethodSearch": "Platform User Search",
+            "inviteMethodSearchSubtitle": "Search registered users & notify directly",
+            "searchPlatformTitle": "Invite Registered Platform User",
+            "searchPlatformDesc": "Search by name or email. The invitation appears immediately in the invitee's notifications inbox.",
+            "searchPlaceholder": "Search by name or email...",
+            "searchNoResults": "No registered platform users found.",
+            "inviteUserBtn": "Send Invitation to User Inbox",
+            "inviteSentSuccess": "Invitation sent directly to the user's notification inbox!",
             "cancel": "Cancel",
             "inviteError": "Could not create the invitation. Check your shop access and try again.",
             "copyError": "Could not copy the link. Select and copy it above.",
@@ -578,13 +583,16 @@
               "name": "Username",
               "email": "Email",
               "role": "Access",
+              "shops": "Assigned Shops",
               "branch": "Branch"
             },
             "roles": {
               "owner": "Owner",
-              "manager": "Manager",
+              "manager": "General Manager / Manager",
               "cashier": "Cashier",
-              "accountant": "Accountant"
+              "accountant": "Accountant",
+              "worker": "Worker",
+              "client": "Client"
             },
             "branches": {
               "main": "Main branch"

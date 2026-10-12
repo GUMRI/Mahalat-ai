@@ -9,6 +9,8 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { FIREBASE_APP, FIRESTORE } from '../../firebase/firebase.providers';
+import { PlatformUserService } from '../../firebase/platform-user.service';
+import { DeviceSessionService } from '../../local-first/service/device-session.service';
 import {
   CHART_OF_ACCOUNTS_TEMPLATE,
   CHART_OF_ACCOUNTS_TEMPLATE_VERSION,
@@ -40,11 +42,18 @@ export interface ShopDetails {
   logoUrl: string | null;
 }
 
-export type ShopMemberRole = 'owner' | 'manager' | 'cashier' | 'accountant';
+export type ShopMemberRole =
+  | 'owner'
+  | 'manager'
+  | 'cashier'
+  | 'accountant'
+  | 'worker'
+  | 'client';
 
 export interface CreateInvitationOptions {
   email?: string;
-  role?: 'cashier' | 'manager' | 'accountant';
+  recipientUid?: string;
+  role?: 'cashier' | 'manager' | 'accountant' | 'worker' | 'client';
 }
 
 export interface CreatedInvitation {
@@ -74,6 +83,8 @@ const BUSINESS_TYPES = new Set<BusinessType>([
 export class ShopRegistrationService {
   private readonly firestore = inject(FIRESTORE);
   private readonly storage = getStorage(inject(FIREBASE_APP));
+  private readonly platformUserService = inject(PlatformUserService);
+  private readonly deviceSessionService = inject(DeviceSessionService);
 
   detectCountry(): CountryCode {
     const tags = typeof navigator === 'undefined' ? [] : navigator.languages;
@@ -182,6 +193,25 @@ export class ShopRegistrationService {
         });
       }
     });
+
+    // If options.recipientUid is provided, send in-platform notification
+    if (options?.recipientUid) {
+      const shopSnap = await getDoc(shopRef);
+      const shopName = shopSnap.data()?.['name'] || '';
+      await this.platformUserService.sendNotification(options.recipientUid, {
+        type: 'invitation',
+        title: 'دعوة للانضمام إلى متجر',
+        message: `تمت دعوتك للانضمام إلى متجر «${shopName}» بصلاحية: ${inviteRole}`,
+        status: 'unread',
+        data: {
+          shopId,
+          invitationId,
+          shopName,
+          role: inviteRole,
+          email: inviteEmail ?? undefined,
+        },
+      });
+    }
 
     const invitationUrl = new URL('/', window.location.origin);
     invitationUrl.searchParams.set('shopId', shopId);
@@ -312,14 +342,7 @@ export class ShopRegistrationService {
       if (member.exists()) {
         throw new FirebaseError(
           'shop/already-member',
-          'This account is already a member of the shop.',
-        );
-      }
-      const currentShopId = userProfile.data()?.['shopId'];
-      if (typeof currentShopId === 'string' && currentShopId !== invitation.shopId) {
-        throw new FirebaseError(
-          'shop/already-linked',
-          'This account is already linked to another shop.',
+          'This account is already a member of this shop.',
         );
       }
 
@@ -449,15 +472,25 @@ export class ShopRegistrationService {
       const ownerDisplayName = (email.split('@')[0] || 'Owner')
         .replace(/[._-]+/g, ' ')
         .replace(/\b\w/g, (char) => char.toUpperCase());
+      const businessRef = doc(this.firestore, 'businesses', userId);
+      transaction.set(businessRef, {
+        id: userId,
+        name: setup.name.trim(),
+        ownerId: userId,
+        createdAt,
+      });
+
       transaction.set(userRef, {
         uid: userId,
         email,
         displayName: ownerDisplayName,
         shopId: userId,
+        ownedBusinessId: userId,
+        activeBusinessId: userId,
         branchId: 'main',
         role: 'owner',
         createdAt,
-      });
+      }, { merge: true });
       transaction.set(memberRef, {
         uid: userId,
         email,
@@ -488,6 +521,13 @@ export class ShopRegistrationService {
         );
       }
     });
+
+    // Register current device for the shop
+    try {
+      await this.deviceSessionService.registerCurrentDevice(userId, userId);
+    } catch (e) {
+      console.warn('Device registration skipped or offline:', e);
+    }
   }
 
   currencyFor(countryCode: CountryCode): string {
@@ -530,10 +570,18 @@ function parseShopInvitation(value: string): ShopInvitationReference {
   return { shopId, invitationId };
 }
 
-function isInvitedRole(value: unknown): value is 'manager' | 'cashier' | 'accountant' {
-  return value === 'manager' || value === 'cashier' || value === 'accountant';
+function isInvitedRole(
+  value: unknown,
+): value is 'manager' | 'cashier' | 'accountant' | 'worker' | 'client' {
+  return (
+    value === 'manager' ||
+    value === 'cashier' ||
+    value === 'accountant' ||
+    value === 'worker' ||
+    value === 'client'
+  );
 }
 
 function isShopMemberRole(value: unknown): value is ShopMemberRole {
-  return value === 'owner' || value === 'manager' || isInvitedRole(value);
+  return value === 'owner' || isInvitedRole(value);
 }

@@ -63,6 +63,14 @@
                   <span class="seg-subtitle">{{ 'app.businessManagement.pages.users.inviteMethodEmailSubtitle' | transloco }}</span>
                 </ion-label>
               </ion-segment-button>
+
+              <ion-segment-button value="search" class="method-seg-button">
+                <ion-icon [icon]="peopleIcon" aria-hidden="true"></ion-icon>
+                <ion-label>
+                  <span class="seg-title">{{ 'app.businessManagement.pages.users.inviteMethodSearch' | transloco }}</span>
+                  <span class="seg-subtitle">{{ 'app.businessManagement.pages.users.inviteMethodSearchSubtitle' | transloco }}</span>
+                </ion-label>
+              </ion-segment-button>
             </ion-segment>
           </div>
 
@@ -113,6 +121,8 @@
                       <ion-select-option value="cashier">{{ 'app.businessManagement.pages.users.roles.cashier' | transloco }}</ion-select-option>
                       <ion-select-option value="manager">{{ 'app.businessManagement.pages.users.roles.manager' | transloco }}</ion-select-option>
                       <ion-select-option value="accountant">{{ 'app.businessManagement.pages.users.roles.accountant' | transloco }}</ion-select-option>
+                      <ion-select-option value="worker">{{ 'app.businessManagement.pages.users.roles.worker' | transloco }}</ion-select-option>
+                      <ion-select-option value="client">{{ 'app.businessManagement.pages.users.roles.client' | transloco }}</ion-select-option>
                     </ion-select>
                   </div>
 
@@ -168,6 +178,8 @@
                   <ion-select-option value="cashier">{{ 'app.businessManagement.pages.users.roles.cashier' | transloco }}</ion-select-option>
                   <ion-select-option value="manager">{{ 'app.businessManagement.pages.users.roles.manager' | transloco }}</ion-select-option>
                   <ion-select-option value="accountant">{{ 'app.businessManagement.pages.users.roles.accountant' | transloco }}</ion-select-option>
+                  <ion-select-option value="worker">{{ 'app.businessManagement.pages.users.roles.worker' | transloco }}</ion-select-option>
+                  <ion-select-option value="client">{{ 'app.businessManagement.pages.users.roles.client' | transloco }}</ion-select-option>
                 </ion-select>
               </div>
 
@@ -247,6 +259,104 @@
               }
             </div>
           }
+
+          <!-- Method 3: Platform User Search & Direct Notification -->
+          @if (inviteMethod() === 'search') {
+            <div class="invite-mode-container search-mode">
+              <div class="mode-header-badge">
+                <ion-badge color="tertiary">
+                  <ion-icon [icon]="peopleIcon" aria-hidden="true"></ion-icon>
+                  {{ 'app.businessManagement.pages.users.searchPlatformTitle' | transloco }}
+                </ion-badge>
+              </div>
+
+              <p class="search-mode-desc">
+                {{ 'app.businessManagement.pages.users.searchPlatformDesc' | transloco }}
+              </p>
+
+              <!-- Role Selector for Platform Search -->
+              <div class="role-selector-field">
+                <ion-label class="field-label">{{ 'app.businessManagement.pages.users.inviteRoleLabel' | transloco }}</ion-label>
+                <ion-select
+                  interface="popover"
+                  fill="outline"
+                  [value]="inviteRole()"
+                  (ionChange)="onRoleChange($event)"
+                >
+                  <ion-select-option value="cashier">{{ 'app.businessManagement.pages.users.roles.cashier' | transloco }}</ion-select-option>
+                  <ion-select-option value="manager">{{ 'app.businessManagement.pages.users.roles.manager' | transloco }}</ion-select-option>
+                  <ion-select-option value="accountant">{{ 'app.businessManagement.pages.users.roles.accountant' | transloco }}</ion-select-option>
+                  <ion-select-option value="worker">{{ 'app.businessManagement.pages.users.roles.worker' | transloco }}</ion-select-option>
+                  <ion-select-option value="client">{{ 'app.businessManagement.pages.users.roles.client' | transloco }}</ion-select-option>
+                </ion-select>
+              </div>
+
+              <!-- Search Bar -->
+              <div class="platform-search-bar-wrapper">
+                <ion-searchbar
+                  [placeholder]="'app.businessManagement.pages.users.searchPlaceholder' | transloco"
+                  [value]="platformSearchQuery()"
+                  (ionInput)="onPlatformSearch($event.detail.value ?? '')"
+                  [debounce]="300"
+                ></ion-searchbar>
+              </div>
+
+              @if (platformSearchSuccess(); as successUser) {
+                <div class="search-success-banner">
+                  <ion-chip color="success">
+                    <ion-icon [icon]="checkmarkIcon" aria-hidden="true"></ion-icon>
+                    <ion-label>{{ 'app.businessManagement.pages.users.inviteSentSuccess' | transloco }} ({{ successUser }})</ion-label>
+                  </ion-chip>
+                </div>
+              }
+
+              <!-- Search Results List -->
+              <div class="search-results-wrapper">
+                @if (isSearchingPlatform()) {
+                  <div class="search-loading">
+                    <ion-spinner name="crescent"></ion-spinner>
+                  </div>
+                } @else if (platformSearchResults().length > 0) {
+                  <div class="users-result-list">
+                    @for (targetUser of platformSearchResults(); track targetUser.uid) {
+                      <div class="user-result-row">
+                        <div class="user-result-info">
+                          <ion-avatar class="result-avatar">
+                            @if (targetUser.avatarUrl) {
+                              <img [src]="targetUser.avatarUrl" alt="" />
+                            } @else {
+                              <span>{{ targetUser.displayName ? targetUser.displayName.charAt(0).toUpperCase() : 'م' }}</span>
+                            }
+                          </ion-avatar>
+                          <div class="result-text">
+                            <strong>{{ targetUser.displayName || targetUser.email }}</strong>
+                            <span>{{ targetUser.email }}</span>
+                          </div>
+                        </div>
+
+                        <ion-button
+                          size="small"
+                          fill="solid"
+                          color="primary"
+                          [disabled]="isCreatingInvitation() && platformSearchInvitedUid() === targetUser.uid"
+                          (click)="invitePlatformUser(targetUser)"
+                        >
+                          @if (isCreatingInvitation() && platformSearchInvitedUid() === targetUser.uid) {
+                            <ion-spinner name="crescent" slot="start"></ion-spinner>
+                          } @else {
+                            <ion-icon [icon]="personAddIcon" slot="start" aria-hidden="true"></ion-icon>
+                          }
+                          {{ 'app.businessManagement.pages.users.inviteUserBtn' | transloco }}
+                        </ion-button>
+                      </div>
+                    }
+                  </div>
+                } @else if (platformSearchQuery().trim()) {
+                  <p class="search-empty-note">{{ 'app.businessManagement.pages.users.searchNoResults' | transloco }}</p>
+                }
+              </div>
+            </div>
+          }
         </ion-content>
       </ng-template>
     </ion-modal>
@@ -302,6 +412,7 @@
               <th scope="col">{{ 'app.businessManagement.pages.users.columns.name' | transloco }}</th>
               <th scope="col">{{ 'app.businessManagement.pages.users.columns.email' | transloco }}</th>
               <th scope="col">{{ 'app.businessManagement.pages.users.columns.role' | transloco }}</th>
+              <th scope="col">{{ 'app.businessManagement.pages.users.columns.shops' | transloco }}</th>
               <th scope="col">{{ 'app.businessManagement.pages.users.columns.branch' | transloco }}</th>
             </tr>
           </thead>
@@ -327,6 +438,9 @@
                   <ion-badge [color]="roleBadgeColor(row.getValue('role'))">
                     {{ roleTranslationKey(row.getValue('role')) | transloco }}
                   </ion-badge>
+                </td>
+                <td class="user-shops-cell">
+                  <span class="assigned-shop-tag">{{ assignedShopLabel(row.getValue('role')) }}</span>
                 </td>
                 <td>{{ branchLabel(row.getValue('branchId')) | transloco }}</td>
               </tr>

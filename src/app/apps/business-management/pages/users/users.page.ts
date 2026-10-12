@@ -39,6 +39,8 @@ import {
 import { FirebaseAuthService } from '../../../../firebase/firebase-auth.service';
 import { ShopRegistrationService } from '../../../../auth/service/shop-registration.service';
 import { LocalFirstUsersService } from '../../../../local-first/service/local-first-users.service';
+import { PlatformUserService, type PlatformUserProfile } from '../../../../firebase/platform-user.service';
+import { BusinessScopeService } from '../../services/business-scope.service';
 import type {
   ShopUser,
   ShopUserRole,
@@ -50,6 +52,7 @@ const USERS_TABLE_COLUMNS = [
   { accessorKey: 'displayName', id: 'name' },
   { accessorKey: 'email', id: 'email' },
   { accessorKey: 'role', id: 'role' },
+  { accessorKey: 'branchId', id: 'shops' },
   { accessorKey: 'branchId', id: 'branchId' },
 ];
 
@@ -84,6 +87,8 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
   private readonly auth = inject(FirebaseAuthService);
   private readonly registration = inject(ShopRegistrationService);
   private readonly usersService = inject(LocalFirstUsersService);
+  private readonly platformUserService = inject(PlatformUserService);
+  readonly scope: BusinessScopeService = inject(BusinessScopeService);
   private invitationQrObjectUrl: string | null = null;
 
   readonly usersCollection = signal<
@@ -98,9 +103,9 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
   readonly search = signal('');
   readonly canInvite = signal(false);
   readonly isInviteModalOpen = signal(false);
-  readonly inviteMethod = signal<'qr' | 'email'>('qr');
+  readonly inviteMethod = signal<'qr' | 'email' | 'search'>('qr');
   readonly inviteEmail = signal('');
-  readonly inviteRole = signal<'cashier' | 'manager' | 'accountant'>('cashier');
+  readonly inviteRole = signal<'cashier' | 'manager' | 'accountant' | 'worker' | 'client'>('cashier');
   readonly inviteEmailError = signal<string | null>(null);
   readonly isCreatingInvitation = signal(false);
   readonly invitationUrl = signal<string | null>(null);
@@ -109,6 +114,14 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
   readonly invitationQrCode = signal<string | null>(null);
   readonly invitationError = signal<string | null>(null);
   readonly isCopied = signal(false);
+
+  // Platform user search state
+  readonly platformSearchQuery = signal('');
+  readonly isSearchingPlatform = signal(false);
+  readonly platformSearchResults = signal<PlatformUserProfile[]>([]);
+  readonly platformSearchInvitedUid = signal<string | null>(null);
+  readonly platformSearchSuccess = signal<string | null>(null);
+
   private readonly queryRetry = signal(0);
   readonly usersQuery = injectLiveQuery({
     params: () => ({
@@ -199,6 +212,10 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
         return 'warning';
       case 'accountant':
         return 'tertiary';
+      case 'worker':
+        return 'medium';
+      case 'client':
+        return 'secondary';
       default:
         return 'light';
     }
@@ -212,6 +229,15 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
     return branchId === 'main'
       ? 'app.businessManagement.pages.users.branches.main'
       : branchId;
+  }
+
+  assignedShopLabel(role: ShopUserRole): string {
+    if (role === 'owner' || role === 'manager') {
+      return 'جميع محلات النشاط (All Shops)';
+    }
+    const shops = this.scope.shops();
+    const currentShop = shops.find((s) => s.id === this.scope.selectedShopId());
+    return currentShop ? currentShop.name : 'المحل الرئيسي (Main Shop)';
   }
 
   openInviteModal(): void {
@@ -228,11 +254,12 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
 
   closeInviteModal(): void {
     this.isInviteModalOpen.set(false);
+    this.platformSearchSuccess.set(null);
   }
 
   async onInviteMethodChange(event: CustomEvent<{ value?: unknown }>): Promise<void> {
-    const method = event.detail.value as 'qr' | 'email' | undefined;
-    if (method === 'qr' || method === 'email') {
+    const method = event.detail.value as 'qr' | 'email' | 'search' | undefined;
+    if (method === 'qr' || method === 'email' || method === 'search') {
       this.inviteMethod.set(method);
       if (method === 'qr') {
         // If current invitation was tied to a specific email, regenerate open QR
@@ -242,10 +269,11 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
           await this.generateInvitation();
         }
       } else if (method === 'email') {
-        // If an email was already entered, generate or keep ready
         if (this.inviteEmail().trim() && this.invitationEmail() !== this.inviteEmail().trim()) {
           this.inviteEmailError.set(null);
         }
+      } else if (method === 'search') {
+        this.platformSearchSuccess.set(null);
       }
     }
   }
@@ -255,14 +283,56 @@ export class BusinessManagementUsersPage implements OnInit, OnDestroy {
   }
 
   async onRoleChange(event: CustomEvent<{ value?: unknown }>): Promise<void> {
-    const role = event.detail.value as 'cashier' | 'manager' | 'accountant' | undefined;
-    if (role && (role === 'cashier' || role === 'manager' || role === 'accountant')) {
+    const role = event.detail.value as 'cashier' | 'manager' | 'accountant' | 'worker' | 'client' | undefined;
+    if (role) {
       this.inviteRole.set(role);
       const emailToUse =
         this.inviteMethod() === 'email'
           ? this.invitationEmail() || this.inviteEmail().trim() || undefined
           : undefined;
       await this.generateInvitation(emailToUse);
+    }
+  }
+
+  async onPlatformSearch(queryText: string): Promise<void> {
+    this.platformSearchQuery.set(queryText);
+    const trimmed = queryText.trim();
+    if (!trimmed) {
+      this.platformSearchResults.set([]);
+      return;
+    }
+    this.isSearchingPlatform.set(true);
+    try {
+      const results = await this.platformUserService.searchUsers(trimmed);
+      this.platformSearchResults.set(results);
+    } catch {
+      this.platformSearchResults.set([]);
+    } finally {
+      this.isSearchingPlatform.set(false);
+    }
+  }
+
+  async invitePlatformUser(targetUser: PlatformUserProfile): Promise<void> {
+    const user = this.auth.user();
+    if (!user || this.isCreatingInvitation()) return;
+
+    this.isCreatingInvitation.set(true);
+    this.platformSearchInvitedUid.set(targetUser.uid);
+    this.platformSearchSuccess.set(null);
+
+    try {
+      await this.registration.createUserInvitation(user.uid, {
+        email: targetUser.email,
+        recipientUid: targetUser.uid,
+        role: this.inviteRole(),
+      });
+      this.platformSearchSuccess.set(targetUser.displayName || targetUser.email);
+    } catch (error) {
+      console.warn('Failed to send in-platform invitation:', error);
+      this.invitationError.set('app.businessManagement.pages.users.inviteError');
+    } finally {
+      this.isCreatingInvitation.set(false);
+      this.platformSearchInvitedUid.set(null);
     }
   }
 

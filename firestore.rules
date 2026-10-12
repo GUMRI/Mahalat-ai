@@ -1,0 +1,97 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isUser(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // A user can read platform user directory or search users by email/name
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      // User can create or update their own profile document
+      allow create, update: if isUser(userId);
+      // User notifications subcollection
+      match /notifications/{notificationId} {
+        allow read, write: if isUser(userId);
+      }
+      // User devices subcollection
+      match /devices/{deviceId} {
+        allow read, write: if isUser(userId);
+      }
+    }
+
+    // Businesses (Tenant unit)
+    match /businesses/{businessId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if isAuthenticated() && (
+        resource.data.ownerId == request.auth.uid ||
+        request.resource.data.ownerId == request.auth.uid
+      );
+
+      // Members of the business
+      match /members/{memberId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated();
+      }
+
+      // Shops within the business
+      match /shops/{shopId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated();
+
+        match /devices/{deviceId} {
+          allow read, write: if isAuthenticated();
+        }
+      }
+    }
+
+    // Legacy and Direct Shops collection (mapped to Business / Shop)
+    match /shops/{shopId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+
+      match /members/{memberId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated();
+      }
+
+      match /invitations/{invitationId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated();
+      }
+
+      match /branches/{branchId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated();
+
+        match /accounts/{accountCode} {
+          allow read: if isAuthenticated();
+          allow write: if isAuthenticated();
+        }
+      }
+
+      match /devices/{deviceId} {
+        allow read, write: if isAuthenticated();
+      }
+    }
+
+    // Pending invitations lookup
+    match /pending_invitations/{email} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    // Device attendance & quick switch sessions
+    match /device_sessions/{sessionId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+  }
+}

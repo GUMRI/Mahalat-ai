@@ -67,6 +67,10 @@ const ACCOUNTING_CHILDREN: readonly NavigationChild[] = [
   { label: 'app.accountingConsole.navigation.profit-and-loss', route: '/app/accounting/console/profit-and-loss' },
 ];
 
+import { UserSwitchModalComponent } from '../user-switch-modal/user-switch-modal.component';
+import { DeviceSessionService } from '../../../local-first/service/device-session.service';
+import { personOutline } from 'ionicons/icons';
+
 @Component({
   selector: 'app-shell',
   templateUrl: './app-shell.component.html',
@@ -94,6 +98,7 @@ const ACCOUNTING_CHILDREN: readonly NavigationChild[] = [
     TranslocoPipe,
     ProfileMenuComponent,
     RotatingLogoComponent,
+    UserSwitchModalComponent,
   ],
 })
 export class AppShellComponent implements OnInit {
@@ -101,6 +106,7 @@ export class AppShellComponent implements OnInit {
   private readonly auth = inject(FirebaseAuthService);
   private readonly registration = inject(ShopRegistrationService);
   private readonly router = inject(Router);
+  readonly deviceSession = inject(DeviceSessionService);
 
   readonly shop = signal<ShopDetails | null>(null);
   readonly shopLoadFailed = signal(false);
@@ -112,6 +118,7 @@ export class AppShellComponent implements OnInit {
   readonly notificationsTriggerId = 'platform-notifications';
   readonly notificationsIcon = notificationsOutline;
   readonly shiftIcon = timeOutline;
+  readonly personIcon = personOutline;
   readonly navigationItems: readonly NavigationItem[] = [
     {
       label: 'app.navigation.home',
