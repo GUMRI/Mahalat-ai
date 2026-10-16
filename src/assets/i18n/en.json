@@ -570,7 +570,7 @@
             "copyError": "Could not copy the link. Select and copy it above.",
             "empty": "No users have access to this shop yet.",
             "noMatches": "No users match your search.",
-            "search": "Search by email",
+            "search": "Search users",
             "loading": "Loading shop users...",
             "loadError": "Could not load shop users. Check your connection and access, then retry.",
             "queryError": "Could not display the users. Please try again.",
@@ -580,7 +580,11 @@
             "tableLabel": "Shop users",
             "columns": {
               "avatar": "Avatar",
+<<<<<<< HEAD
               "name": "Username",
+=======
+              "name": "Name",
+>>>>>>> 9c25cc5 (auth,member)
               "email": "Email",
               "role": "Access",
               "shops": "Assigned Shops",

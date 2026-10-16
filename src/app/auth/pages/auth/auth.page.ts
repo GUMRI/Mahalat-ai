@@ -282,6 +282,8 @@ export class AuthPage {
         user.uid,
         user.email ?? '',
         this.invitationUrl().trim(),
+        user.displayName ?? null,
+        user.photoURL ?? null,
       );
       this.screen.set('ready');
       await this.navigateToWorkspace();
@@ -346,14 +348,20 @@ export class AuthPage {
     }
 
     await this.runAuthAction(async () => {
-      await this.registration.register(user.uid, user.email ?? '', {
-        name: this.shopName(),
-        businessType: this.businessType(),
-        countryCode: this.countryCode(),
-        currency: this.currencyForCountry(),
-        logo: this.logo() ?? undefined,
-        extensions: this.extensions(),
-      });
+      await this.registration.register(
+        user.uid,
+        user.email ?? '',
+        {
+          name: this.shopName(),
+          businessType: this.businessType(),
+          countryCode: this.countryCode(),
+          currency: this.currencyForCountry(),
+          logo: this.logo() ?? undefined,
+          extensions: this.extensions(),
+        },
+        user.displayName ?? null,
+        user.photoURL ?? null,
+      );
       this.screen.set('ready');
       await this.navigateToWorkspace();
     });

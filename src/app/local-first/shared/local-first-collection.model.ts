@@ -12,6 +12,7 @@ export interface LocalFirstSync<T extends object> {
 }
 
 export interface LocalFirstCollection<
+
   T extends object,
   TSchema extends StandardSchemaV1 = StandardSchemaV1,
 > {

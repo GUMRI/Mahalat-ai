@@ -307,6 +307,8 @@ export class ShopRegistrationService {
     userId: string,
     email: string,
     invitationUrl: string,
+    name?: string | null,
+    avatar?: string | null,
   ): Promise<string> {
     const invitation = parseShopInvitation(invitationUrl);
     const shopRef = doc(this.firestore, 'shops', invitation.shopId);
@@ -400,7 +402,14 @@ export class ShopRegistrationService {
       transaction.set(memberRef, {
         uid: userId,
         email,
+<<<<<<< HEAD
         displayName: memberDisplayName,
+=======
+        name: name ?? null,
+        displayName: name ?? null,
+        avatar: avatar ?? null,
+        photoURL: avatar ?? null,
+>>>>>>> 9c25cc5 (auth,member)
         branchId,
         role,
         _deleted: false,
@@ -409,7 +418,22 @@ export class ShopRegistrationService {
       });
       transaction.set(
         userRef,
+<<<<<<< HEAD
         { uid: userId, email, displayName: memberDisplayName, shopId: invitation.shopId, branchId, role, createdAt },
+=======
+        {
+          uid: userId,
+          email,
+          name: name ?? null,
+          displayName: name ?? null,
+          avatar: avatar ?? null,
+          photoURL: avatar ?? null,
+          shopId: invitation.shopId,
+          branchId,
+          role,
+          createdAt,
+        },
+>>>>>>> 9c25cc5 (auth,member)
         { merge: true },
       );
 
@@ -424,6 +448,8 @@ export class ShopRegistrationService {
     userId: string,
     email: string,
     setup: ShopRegistration,
+    name?: string | null,
+    avatar?: string | null,
   ): Promise<void> {
     let logoUrl: string | null = null;
     if (setup.logo) {
@@ -483,7 +509,14 @@ export class ShopRegistrationService {
       transaction.set(userRef, {
         uid: userId,
         email,
+<<<<<<< HEAD
         displayName: ownerDisplayName,
+=======
+        name: name ?? null,
+        displayName: name ?? null,
+        avatar: avatar ?? null,
+        photoURL: avatar ?? null,
+>>>>>>> 9c25cc5 (auth,member)
         shopId: userId,
         ownedBusinessId: userId,
         activeBusinessId: userId,
@@ -494,7 +527,14 @@ export class ShopRegistrationService {
       transaction.set(memberRef, {
         uid: userId,
         email,
+<<<<<<< HEAD
         displayName: ownerDisplayName,
+=======
+        name: name ?? null,
+        displayName: name ?? null,
+        avatar: avatar ?? null,
+        photoURL: avatar ?? null,
+>>>>>>> 9c25cc5 (auth,member)
         branchId: 'main',
         role: 'owner',
         _deleted: false,

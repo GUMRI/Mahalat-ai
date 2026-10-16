@@ -14,6 +14,10 @@ export type ShopUser = Record<string, unknown> & {
   displayName?: string;
   avatarUrl?: string;
   email: string;
+  name?: string | null;
+  displayName?: string | null;
+  avatar?: string | null;
+  photoURL?: string | null;
   branchId: string;
   role: ShopUserRole;
   createdAt?: {
@@ -51,14 +55,39 @@ function isShopUser(value: unknown): value is ShopUser {
     return false;
   }
   if (
+<<<<<<< HEAD
     user['displayName'] !== undefined &&
+=======
+    user['name'] !== undefined &&
+    user['name'] !== null &&
+    typeof user['name'] !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    user['displayName'] !== undefined &&
+    user['displayName'] !== null &&
+>>>>>>> 9c25cc5 (auth,member)
     typeof user['displayName'] !== 'string'
   ) {
     return false;
   }
   if (
+<<<<<<< HEAD
     user['avatarUrl'] !== undefined &&
     typeof user['avatarUrl'] !== 'string'
+=======
+    user['avatar'] !== undefined &&
+    user['avatar'] !== null &&
+    typeof user['avatar'] !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    user['photoURL'] !== undefined &&
+    user['photoURL'] !== null &&
+    typeof user['photoURL'] !== 'string'
+>>>>>>> 9c25cc5 (auth,member)
   ) {
     return false;
   }
